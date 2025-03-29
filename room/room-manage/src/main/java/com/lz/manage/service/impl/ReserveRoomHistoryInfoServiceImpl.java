@@ -20,6 +20,7 @@ import com.lz.common.utils.DateUtils;
 import javax.annotation.Resource;
 
 import com.lz.manage.model.domain.RoomInfo;
+import com.lz.manage.model.enums.RReverveStatus;
 import com.lz.manage.model.enums.RRoomStatus;
 import com.lz.manage.service.IRoomInfoService;
 import com.lz.system.service.ISysUserService;
@@ -121,6 +122,16 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
      */
     @Override
     public int updateReserveRoomHistoryInfo(ReserveRoomHistoryInfo reserveRoomHistoryInfo) {
+        //判断是否有房间
+        RoomInfo roomInfo = roomInfoService.selectRoomInfoByRoomId(reserveRoomHistoryInfo.getRoomId());
+        if (StringUtils.isNull(roomInfo)) {
+            throw new ServiceException("房间不存在！！！");
+        }
+        //如果传过来是退房
+        if (reserveRoomHistoryInfo.getHistoryStatus().equals(Long.parseLong(RReverveStatus.REVERVE_STATUS_2.getValue()))) {
+            roomInfo.setRoomStatus(Long.parseLong(RRoomStatus.ROOM_STATUS_0.getValue()));
+            roomInfoService.updateById(roomInfo);
+        }
         reserveRoomHistoryInfo.setUpdateBy(SecurityUtils.getUsername());
         reserveRoomHistoryInfo.setUpdateTime(DateUtils.getNowDate());
         return reserveRoomHistoryInfoMapper.updateReserveRoomHistoryInfo(reserveRoomHistoryInfo);

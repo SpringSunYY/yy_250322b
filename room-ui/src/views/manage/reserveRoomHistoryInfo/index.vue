@@ -83,17 +83,17 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-plus"-->
-<!--          size="mini"-->
-<!--          @click="handleAdd"-->
-<!--          v-hasPermi="['manage:reserveRoomHistoryInfo:add']"-->
-<!--        >新增-->
-<!--        </el-button>-->
-<!--      </el-col>-->
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="primary"-->
+      <!--          plain-->
+      <!--          icon="el-icon-plus"-->
+      <!--          size="mini"-->
+      <!--          @click="handleAdd"-->
+      <!--          v-hasPermi="['manage:reserveRoomHistoryInfo:add']"-->
+      <!--        >新增-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -190,6 +190,14 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['manage:reserveRoomHistoryInfo:edit']"
           >修改
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleReturn(scope.row)"
+            v-hasPermi="['manage:reserveRoomHistoryInfo:edit']"
+          >退房
           </el-button>
           <el-button
             size="mini"
@@ -370,6 +378,24 @@ export default {
     this.getList()
   },
   methods: {
+    //退房
+    handleReturn(row) {
+      if (row.historyStatus === 2 || row.historyStatus === 3) {
+        this.$modal.msgError('当前状态不可退房')
+        return
+      }
+      const that = this
+      row.historyStatus = 2
+      this.$modal.confirm('是否确认退房？').then(function() {
+        updateReserveRoomHistoryInfo(row).then(res => {
+          that.$modal.msgSuccess('退房成功')
+          that.getList()
+        })
+      }).catch(function() {
+      }).finally(function() {
+
+      })
+    },
     handlePay(row) {
       this.reset()
       this.title = '支付订单--' + row.roomName
