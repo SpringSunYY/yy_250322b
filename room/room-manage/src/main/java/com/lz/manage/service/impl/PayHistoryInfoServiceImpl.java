@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lz.common.annotation.DataScope;
 import com.lz.common.core.domain.entity.SysUser;
 import com.lz.common.exception.ServiceException;
 import com.lz.common.utils.StringUtils;
@@ -76,6 +77,7 @@ public class PayHistoryInfoServiceImpl extends ServiceImpl<PayHistoryInfoMapper,
      * @return 支付记录
      */
     @Override
+    @DataScope(deptAlias = "tb_pay_history_info", userAlias = "tb_pay_history_info")
     public List<PayHistoryInfo> selectPayHistoryInfoList(PayHistoryInfo payHistoryInfo) {
         List<PayHistoryInfo> payHistoryInfos = payHistoryInfoMapper.selectPayHistoryInfoList(payHistoryInfo);
         for (PayHistoryInfo info : payHistoryInfos) {

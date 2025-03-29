@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lz.common.annotation.DataScope;
 import com.lz.common.core.domain.entity.SysUser;
 import com.lz.common.exception.ServiceException;
 import com.lz.common.utils.SecurityUtils;
@@ -71,6 +72,7 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
      * @return 订房记录
      */
     @Override
+    @DataScope(deptAlias = "tb_reserve_room_history_info", userAlias = "tb_reserve_room_history_info")
     public List<ReserveRoomHistoryInfo> selectReserveRoomHistoryInfoList(ReserveRoomHistoryInfo reserveRoomHistoryInfo) {
         List<ReserveRoomHistoryInfo> reserveRoomHistoryInfos = reserveRoomHistoryInfoMapper.selectReserveRoomHistoryInfoList(reserveRoomHistoryInfo);
         for (ReserveRoomHistoryInfo info : reserveRoomHistoryInfos) {

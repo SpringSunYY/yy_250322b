@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="支付记录编号" prop="historyId">
+      <el-form-item label="记录编号" prop="historyId">
         <el-input
           v-model="queryParams.historyId"
           placeholder="请输入支付记录编号"
@@ -218,8 +218,8 @@
         <el-form-item label="支付凭证" prop="payVoucher">
           <image-upload v-model="form.payVoucher"/>
         </el-form-item>
-        <el-form-item label="审核状态" prop="auditStatus">
-          <el-radio-group :disabled="!checkPermi(['manage:payhistory:audit'])" v-model="form.auditStatus">
+        <el-form-item v-if="checkPermi(['manage:payhistory:audit'])" label="审核状态" prop="auditStatus">
+          <el-radio-group v-model="form.auditStatus">
             <el-radio
               v-for="dict in dict.type.r_pay_status"
               :key="dict.value"
