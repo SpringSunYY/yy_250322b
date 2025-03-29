@@ -28,10 +28,12 @@ public class ReserveRoomHistoryInfoVo implements Serializable
     /** 房间编号 */
     @Excel(name = "房间编号")
     private Long roomId;
+    private String roomName;
 
     /** 用户 */
     @Excel(name = "用户")
     private Long userId;
+    private String userName;
 
     /** 订房天数 */
     @Excel(name = "订房天数")

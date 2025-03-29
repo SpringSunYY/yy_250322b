@@ -5,8 +5,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.NonNull;
 import org.springframework.beans.BeanUtils;
 import com.lz.manage.model.domain.ReserveRoomHistoryInfo;
+
+import javax.validation.constraints.NotNull;
+
 /**
  * 订房记录Vo对象 tb_reserve_room_history_info
  *
@@ -22,12 +26,14 @@ public class ReserveRoomHistoryInfoInsert implements Serializable
     private Long historyId;
 
     /** 房间编号 */
+    @NotNull(message = "房间编号不能为空")
     private Long roomId;
 
     /** 用户 */
     private Long userId;
 
     /** 订房天数 */
+    @NotNull(message = "订房天数不能为空")
     private Long dayNum;
 
     /** 订单总价 */

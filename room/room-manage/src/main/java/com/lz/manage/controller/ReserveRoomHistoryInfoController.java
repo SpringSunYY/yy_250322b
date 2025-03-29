@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import javax.annotation.Resource;
+
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -86,7 +88,7 @@ public class ReserveRoomHistoryInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('manage:reserveRoomHistoryInfo:add')")
     @Log(title = "订房记录", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ReserveRoomHistoryInfoInsert reserveRoomHistoryInfoInsert)
+    public AjaxResult add(@RequestBody @Validated ReserveRoomHistoryInfoInsert reserveRoomHistoryInfoInsert)
     {
         ReserveRoomHistoryInfo reserveRoomHistoryInfo = ReserveRoomHistoryInfoInsert.insertToObj(reserveRoomHistoryInfoInsert);
         return toAjax(reserveRoomHistoryInfoService.insertReserveRoomHistoryInfo(reserveRoomHistoryInfo));
