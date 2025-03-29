@@ -83,17 +83,17 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['manage:reserveRoomHistoryInfo:add']"
-        >新增
-        </el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          icon="el-icon-plus"-->
+<!--          size="mini"-->
+<!--          @click="handleAdd"-->
+<!--          v-hasPermi="['manage:reserveRoomHistoryInfo:add']"-->
+<!--        >新增-->
+<!--        </el-button>-->
+<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -179,6 +179,14 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            @click="handlePay(scope.row)"
+            v-hasPermi="['manage:payHistoryInfo:add']"
+          >支付
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['manage:reserveRoomHistoryInfo:edit']"
           >修改
@@ -213,7 +221,7 @@
           <el-input readonly v-model="form.totalPrice" placeholder="请输入订单总价"/>
         </el-form-item>
         <el-form-item label="状态" prop="historyStatus">
-          <el-radio-group readonly v-model="form.historyStatus">
+          <el-radio-group disabled v-model="form.historyStatus">
             <el-radio
               v-for="dict in dict.type.r_reverve_status"
               :key="dict.value"
@@ -240,6 +248,25 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 添加或修改支付记录对话框 -->
+    <el-dialog :title="title" :visible.sync="payOpen" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="支付金额" prop="payPrice">
+          <el-input-number :min="0" :precision="2" v-model="form.payPrice" placeholder="请输入实际支付金额"/>
+        </el-form-item>
+        <el-form-item label="支付凭证" prop="payVoucher">
+          <image-upload :file-size="10" :limit="5" v-model="form.payVoucher"/>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitPayForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -251,12 +278,15 @@ import {
   addReserveRoomHistoryInfo,
   updateReserveRoomHistoryInfo
 } from '@/api/manage/reserveRoomHistoryInfo'
+import { addPayHistoryInfo } from '@/api/manage/payHistoryInfo'
 
 export default {
   name: 'ReserveRoomHistoryInfo',
   dicts: ['r_reverve_status'],
   data() {
     return {
+      //打开支付
+      payOpen: false,
       //表格展示列
       columns: [
         { key: 0, label: '记录编号', visible: false },
@@ -340,6 +370,20 @@ export default {
     this.getList()
   },
   methods: {
+    handlePay(row) {
+      this.reset()
+      this.title = '支付订单--' + row.roomName
+      this.payOpen = true
+      this.form.userId = row.userId
+      this.form.reserveId = row.historyId
+    },
+    submitPayForm() {
+      addPayHistoryInfo(this.form).then(res => {
+        this.$modal.msgSuccess('支付成功')
+        this.payOpen = false
+        this.getList()
+      })
+    },
     /** 查询订房记录列表 */
     getList() {
       this.loading = true
@@ -365,6 +409,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false
+      this.payOpen = false
       this.reset()
     },
     // 表单重置

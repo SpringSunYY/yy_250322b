@@ -31,10 +31,12 @@ public class PayHistoryInfoVo implements Serializable
 
     /** 房间编号 */
     @Excel(name = "房间编号")
+    private String roomName;
     private Long roomId;
 
     /** 用户 */
     @Excel(name = "用户")
+    private String userName;
     private Long userId;
 
     /** 实际支付金额 */
