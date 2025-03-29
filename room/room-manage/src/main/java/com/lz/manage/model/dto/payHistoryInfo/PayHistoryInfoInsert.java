@@ -7,6 +7,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import com.lz.manage.model.domain.PayHistoryInfo;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 /**
  * 支付记录Vo对象 tb_pay_history_info
  *
@@ -31,9 +35,11 @@ public class PayHistoryInfoInsert implements Serializable
     private Long userId;
 
     /** 实际支付金额 */
+    @NotNull(message = "实际支付金额不能为空")
     private BigDecimal payPrice;
 
     /** 支付凭证 */
+    @NotEmpty(message = "支付凭证不能为空")
     private String payVoucher;
 
     /** 审核状态（0待审核 1同意 2拒绝） */

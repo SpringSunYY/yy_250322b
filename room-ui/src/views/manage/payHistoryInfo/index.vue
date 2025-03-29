@@ -80,17 +80,17 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-plus"-->
-<!--          size="mini"-->
-<!--          @click="handleAdd"-->
-<!--          v-hasPermi="['manage:payHistoryInfo:add']"-->
-<!--        >新增-->
-<!--        </el-button>-->
-<!--      </el-col>-->
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="primary"-->
+      <!--          plain-->
+      <!--          icon="el-icon-plus"-->
+      <!--          size="mini"-->
+      <!--          @click="handleAdd"-->
+      <!--          v-hasPermi="['manage:payHistoryInfo:add']"-->
+      <!--        >新增-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -206,12 +206,12 @@
         <el-form-item label="预定编号" prop="reserveId">
           <el-input readonly v-model="form.reserveId" placeholder="请输入预定编号"/>
         </el-form-item>
-<!--        <el-form-item label="房间编号" prop="roomId">-->
-<!--          <el-input v-model="form.roomId" placeholder="请输入房间编号"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="用户" prop="userId">-->
-<!--          <el-input v-model="form.userId" placeholder="请输入用户"/>-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="房间编号" prop="roomId">-->
+        <!--          <el-input v-model="form.roomId" placeholder="请输入房间编号"/>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="用户" prop="userId">-->
+        <!--          <el-input v-model="form.userId" placeholder="请输入用户"/>-->
+        <!--        </el-form-item>-->
         <el-form-item label="实际支付金额" prop="payPrice">
           <el-input v-model="form.payPrice" placeholder="请输入实际支付金额"/>
         </el-form-item>
@@ -219,11 +219,11 @@
           <image-upload v-model="form.payVoucher"/>
         </el-form-item>
         <el-form-item label="审核状态" prop="auditStatus">
-          <el-radio-group v-model="form.auditStatus">
+          <el-radio-group :disabled="!checkPermi(['manage:payhistory:audit'])" v-model="form.auditStatus">
             <el-radio
               v-for="dict in dict.type.r_pay_status"
               :key="dict.value"
-              :label="parseInt(dict.value)"
+              :label="dict.value"
             >{{ dict.label }}
             </el-radio>
           </el-radio-group>
@@ -248,6 +248,7 @@ import {
   addPayHistoryInfo,
   updatePayHistoryInfo
 } from '@/api/manage/payHistoryInfo'
+import { checkPermi } from '@/utils/permission'
 
 export default {
   name: 'PayHistoryInfo',
@@ -335,6 +336,7 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermi,
     /** 查询支付记录列表 */
     getList() {
       this.loading = true

@@ -103,6 +103,7 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
         }
         //更新房间为已定房
         roomInfo.setRoomStatus(Long.parseLong(RRoomStatus.ROOM_STATUS_1.getValue()));
+        roomInfo.setReserveNum(roomInfo.getReserveNum() + 1);
         roomInfoService.updateById(roomInfo);
         //计算价格
         reserveRoomHistoryInfo.setTotalPrice(roomInfo.getRoomPrice().multiply(new BigDecimal(reserveRoomHistoryInfo.getDayNum())));

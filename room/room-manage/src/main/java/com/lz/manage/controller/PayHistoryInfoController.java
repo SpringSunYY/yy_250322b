@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import javax.annotation.Resource;
+
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -86,7 +88,7 @@ public class PayHistoryInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('manage:payHistoryInfo:add')")
     @Log(title = "支付记录", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody PayHistoryInfoInsert payHistoryInfoInsert)
+    public AjaxResult add(@RequestBody @Validated PayHistoryInfoInsert payHistoryInfoInsert)
     {
         PayHistoryInfo payHistoryInfo = PayHistoryInfoInsert.insertToObj(payHistoryInfoInsert);
         return toAjax(payHistoryInfoService.insertPayHistoryInfo(payHistoryInfo));

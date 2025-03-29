@@ -22,6 +22,8 @@ import javax.annotation.Resource;
 import com.lz.manage.model.domain.ReserveRoomHistoryInfo;
 import com.lz.manage.model.domain.RoomInfo;
 import com.lz.manage.model.enums.RPayStatus;
+import com.lz.manage.model.enums.RReverveStatus;
+import com.lz.manage.model.enums.RRoomStatus;
 import com.lz.manage.service.IReserveRoomHistoryInfoService;
 import com.lz.manage.service.IRoomInfoService;
 import com.lz.system.service.ISysUserService;
@@ -122,6 +124,21 @@ public class PayHistoryInfoServiceImpl extends ServiceImpl<PayHistoryInfoMapper,
      */
     @Override
     public int updatePayHistoryInfo(PayHistoryInfo payHistoryInfo) {
+        //获取到老的订单
+        PayHistoryInfo payHistoryInfoOld = payHistoryInfoMapper.selectPayHistoryInfoByHistoryId(payHistoryInfo.getHistoryId());
+        if (StringUtils.isNull(payHistoryInfoOld)) {
+            throw new ServiceException("该订单不存在！！！");
+        }
+        if (payHistoryInfoOld.getAuditStatus().equals(Long.parseLong(RPayStatus.PAY_STATUS_1.getValue()))) {
+            throw new ServiceException("该订单审核已经通过！！！");
+        }
+        //如果传过来是通过
+        if (payHistoryInfo.getAuditStatus().equals(Long.parseLong(RPayStatus.PAY_STATUS_1.getValue()))) {
+            //更新订房状态
+            ReserveRoomHistoryInfo reserveRoomHistoryInfo = reserveRoomHistoryInfoService.selectReserveRoomHistoryInfoByHistoryId(payHistoryInfo.getReserveId());
+            reserveRoomHistoryInfo.setHistoryStatus(Long.parseLong(RReverveStatus.REVERVE_STATUS_1.getValue()));
+            reserveRoomHistoryInfoService.updateById(reserveRoomHistoryInfo);
+        }
         payHistoryInfo.setUpdateTime(DateUtils.getNowDate());
         return payHistoryInfoMapper.updatePayHistoryInfo(payHistoryInfo);
     }
