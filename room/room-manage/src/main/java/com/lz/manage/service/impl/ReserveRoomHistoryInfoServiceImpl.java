@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lz.common.core.domain.entity.SysUser;
 import com.lz.common.exception.ServiceException;
 import com.lz.common.utils.SecurityUtils;
@@ -201,6 +202,28 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
             return Collections.emptyList();
         }
         return reserveRoomHistoryInfoList.stream().map(ReserveRoomHistoryInfoVo::objToVo).collect(Collectors.toList());
+    }
+
+    @Override
+    public void autoUpdateReserve() {
+        //查到所有的待支付、预定中的记录
+        LambdaQueryWrapper<ReserveRoomHistoryInfo> queryWrapper = new LambdaQueryWrapper<>(ReserveRoomHistoryInfo.class);
+        queryWrapper.in(ReserveRoomHistoryInfo::getHistoryStatus, Long.parseLong(RReverveStatus.REVERVE_STATUS_0.getValue()), Long.parseLong(RReverveStatus.REVERVE_STATUS_1.getValue()));
+        List<ReserveRoomHistoryInfo> list = this.list(queryWrapper);
+        long currentedTimeMillis = System.currentTimeMillis();
+        for (ReserveRoomHistoryInfo info : list) {
+            //获取订房时间 判断订房时间+天数是否大于当前时间
+            Date reserveTime = info.getReserveTime();
+            if (reserveTime.getTime() + info.getDayNum() * 24 * 60 * 60 * 1000 < currentedTimeMillis) {
+                //如果大于当前时间，修改状态为已退房
+                info.setHistoryStatus(Long.parseLong(RReverveStatus.REVERVE_STATUS_3.getValue()));
+                this.updateById(info);
+                //更新房间状态为空闲
+                RoomInfo roomInfo = roomInfoService.selectRoomInfoByRoomId(info.getRoomId());
+                roomInfo.setRoomStatus(Long.parseLong(RRoomStatus.ROOM_STATUS_0.getValue()));
+                roomInfoService.updateById(roomInfo);
+            }
+        }
     }
 
 }

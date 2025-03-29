@@ -39,6 +39,7 @@ public class ReserveRoomHistoryInfo implements Serializable
 
     /** 用户 */
     @Excel(name = "用户")
+    @TableField(exist = false)
     private String userName;
     private Long userId;
 

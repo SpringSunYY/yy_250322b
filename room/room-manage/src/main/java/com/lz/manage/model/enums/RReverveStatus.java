@@ -10,7 +10,8 @@ import java.util.Optional;
 public enum RReverveStatus {
     REVERVE_STATUS_0("0", "待支付"),
     REVERVE_STATUS_1("1", "入住中"),
-    REVERVE_STATUS_2("2", "已退房");
+    REVERVE_STATUS_2("2", "已退房"),
+    REVERVE_STATUS_3("3", "已结束");
 
     private static final Map<String, RReverveStatus> VALUE_TO_ENUM = new HashMap<>();
 

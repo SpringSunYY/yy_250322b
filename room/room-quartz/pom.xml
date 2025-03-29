@@ -35,6 +35,11 @@
             <artifactId>room-common</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.lz</groupId>
+            <artifactId>room-manage</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
