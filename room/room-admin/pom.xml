@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>room</artifactId>
-        <groupId>com.room</groupId>
+        <groupId>com.lz</groupId>
         <version>3.8.9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -45,20 +45,24 @@
 
         <!-- 核心模块-->
         <dependency>
-            <groupId>com.room</groupId>
+            <groupId>com.lz</groupId>
             <artifactId>room-framework</artifactId>
         </dependency>
 
         <!-- 定时任务-->
         <dependency>
-            <groupId>com.room</groupId>
+            <groupId>com.lz</groupId>
             <artifactId>room-quartz</artifactId>
         </dependency>
 
         <!-- 代码生成-->
         <dependency>
-            <groupId>com.room</groupId>
+            <groupId>com.lz</groupId>
             <artifactId>room-generator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.lz</groupId>
+            <artifactId>room-manage</artifactId>
         </dependency>
 
     </dependencies>

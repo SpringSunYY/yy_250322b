@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.room</groupId>
+    <groupId>com.lz</groupId>
     <artifactId>room</artifactId>
     <version>3.8.9</version>
 
@@ -201,39 +201,44 @@
 
             <!-- 定时任务-->
             <dependency>
-                <groupId>com.room</groupId>
+                <groupId>com.lz</groupId>
                 <artifactId>room-quartz</artifactId>
                 <version>${room.version}</version>
             </dependency>
 
             <!-- 代码生成-->
             <dependency>
-                <groupId>com.room</groupId>
+                <groupId>com.lz</groupId>
                 <artifactId>room-generator</artifactId>
                 <version>${room.version}</version>
             </dependency>
 
             <!-- 核心模块-->
             <dependency>
-                <groupId>com.room</groupId>
+                <groupId>com.lz</groupId>
                 <artifactId>room-framework</artifactId>
                 <version>${room.version}</version>
             </dependency>
 
             <!-- 系统模块-->
             <dependency>
-                <groupId>com.room</groupId>
+                <groupId>com.lz</groupId>
                 <artifactId>room-system</artifactId>
                 <version>${room.version}</version>
             </dependency>
 
             <!-- 通用工具-->
             <dependency>
-                <groupId>com.room</groupId>
+                <groupId>com.lz</groupId>
                 <artifactId>room-common</artifactId>
                 <version>${room.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.lz</groupId>
+                <artifactId>room-manage</artifactId>
+                <version>${room.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -244,6 +249,7 @@
         <module>room-quartz</module>
         <module>room-generator</module>
         <module>room-common</module>
+        <module>room-manage</module>
     </modules>
     <packaging>pom</packaging>
 

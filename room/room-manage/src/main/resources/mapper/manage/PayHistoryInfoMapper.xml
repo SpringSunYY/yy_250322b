@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lz.manage.mapper.PayHistoryInfoMapper">
+    
+    <resultMap type="PayHistoryInfo" id="PayHistoryInfoResult">
+        <result property="historyId"    column="history_id"    />
+        <result property="reserveId"    column="reserve_id"    />
+        <result property="roomId"    column="room_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="payPrice"    column="pay_price"    />
+        <result property="payVoucher"    column="pay_voucher"    />
+        <result property="auditStatus"    column="audit_status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectPayHistoryInfoVo">
+        select history_id, reserve_id, room_id, user_id, pay_price, pay_voucher, audit_status, create_time, update_by, update_time, remark from tb_pay_history_info
+    </sql>
+
+    <select id="selectPayHistoryInfoList" parameterType="PayHistoryInfo" resultMap="PayHistoryInfoResult">
+        <include refid="selectPayHistoryInfoVo"/>
+        <where>  
+            <if test="historyId != null "> and history_id = #{historyId}</if>
+            <if test="reserveId != null "> and reserve_id = #{reserveId}</if>
+            <if test="roomId != null "> and room_id = #{roomId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="auditStatus != null "> and audit_status = #{auditStatus}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by like concat('%', #{updateBy}, '%')</if>
+            <if test="params.beginUpdateTime != null and params.beginUpdateTime != '' and params.endUpdateTime != null and params.endUpdateTime != ''"> and update_time between #{params.beginUpdateTime} and #{params.endUpdateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectPayHistoryInfoByHistoryId" parameterType="Long" resultMap="PayHistoryInfoResult">
+        <include refid="selectPayHistoryInfoVo"/>
+        where history_id = #{historyId}
+    </select>
+
+    <insert id="insertPayHistoryInfo" parameterType="PayHistoryInfo" useGeneratedKeys="true" keyProperty="historyId">
+        insert into tb_pay_history_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reserveId != null">reserve_id,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="payPrice != null">pay_price,</if>
+            <if test="payVoucher != null and payVoucher != ''">pay_voucher,</if>
+            <if test="auditStatus != null">audit_status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reserveId != null">#{reserveId},</if>
+            <if test="roomId != null">#{roomId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="payPrice != null">#{payPrice},</if>
+            <if test="payVoucher != null and payVoucher != ''">#{payVoucher},</if>
+            <if test="auditStatus != null">#{auditStatus},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePayHistoryInfo" parameterType="PayHistoryInfo">
+        update tb_pay_history_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="reserveId != null">reserve_id = #{reserveId},</if>
+            <if test="roomId != null">room_id = #{roomId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="payPrice != null">pay_price = #{payPrice},</if>
+            <if test="payVoucher != null and payVoucher != ''">pay_voucher = #{payVoucher},</if>
+            <if test="auditStatus != null">audit_status = #{auditStatus},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where history_id = #{historyId}
+    </update>
+
+    <delete id="deletePayHistoryInfoByHistoryId" parameterType="Long">
+        delete from tb_pay_history_info where history_id = #{historyId}
+    </delete>
+
+    <delete id="deletePayHistoryInfoByHistoryIds" parameterType="String">
+        delete from tb_pay_history_info where history_id in 
+        <foreach item="historyId" collection="array" open="(" separator="," close=")">
+            #{historyId}
+        </foreach>
+    </delete>
+</mapper>
