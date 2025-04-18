@@ -121,21 +121,13 @@ export default {
     const roomId = this.$route.params && this.$route.params.roomId
     this.form.roomId = roomId
     this.getRoomInfo(roomId)
-    this.getList()
+    this.getList(roomId)
   },
   methods: {
     /** 查询房间评价列表 */
-    getList() {
+    getList(id) {
       this.loading = true
-      this.queryParams.params = {}
-      if (null != this.daterangeCreateTime && '' != this.daterangeCreateTime) {
-        this.queryParams.params['beginCreateTime'] = this.daterangeCreateTime[0]
-        this.queryParams.params['endCreateTime'] = this.daterangeCreateTime[1]
-      }
-      if (null != this.daterangeUpdateTime && '' != this.daterangeUpdateTime) {
-        this.queryParams.params['beginUpdateTime'] = this.daterangeUpdateTime[0]
-        this.queryParams.params['endUpdateTime'] = this.daterangeUpdateTime[1]
-      }
+      this.queryParams.roomId = id
       listRoomCommentInfo(this.queryParams).then(response => {
         this.comments = response.rows
         this.total = response.total
