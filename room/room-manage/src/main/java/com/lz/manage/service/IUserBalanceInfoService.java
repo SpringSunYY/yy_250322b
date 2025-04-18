@@ -93,4 +93,15 @@ public interface IUserBalanceInfoService extends IService<UserBalanceInfo> {
      * return: com.lz.manage.model.domain.UserBalanceInfo
      **/
     UserBalanceInfo addUserBalanceInfo(UserBalanceInfo userBalanceInfo);
+
+    /**
+     * description: 根据用户id查询余额
+     * author: YY
+     * method: selectUserBalanceInfoByUserId
+     * date: 2025/4/18 11:51
+     * param:
+     * param: userId
+     * return: com.lz.manage.model.domain.UserBalanceInfo
+     **/
+    UserBalanceInfo selectUserBalanceInfoByUserId(Long userId);
 }

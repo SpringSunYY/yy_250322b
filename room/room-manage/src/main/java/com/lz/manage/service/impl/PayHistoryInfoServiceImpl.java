@@ -22,11 +22,13 @@ import javax.annotation.Resource;
 
 import com.lz.manage.model.domain.ReserveRoomHistoryInfo;
 import com.lz.manage.model.domain.RoomInfo;
+import com.lz.manage.model.domain.UserBalanceInfo;
 import com.lz.manage.model.enums.RPayStatus;
 import com.lz.manage.model.enums.RReverveStatus;
 import com.lz.manage.model.enums.RRoomStatus;
 import com.lz.manage.service.IReserveRoomHistoryInfoService;
 import com.lz.manage.service.IRoomInfoService;
+import com.lz.manage.service.IUserBalanceInfoService;
 import com.lz.system.service.ISysUserService;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -56,6 +58,9 @@ public class PayHistoryInfoServiceImpl extends ServiceImpl<PayHistoryInfoMapper,
 
     @Resource
     private IReserveRoomHistoryInfoService reserveRoomHistoryInfoService;
+
+    @Resource
+    private IUserBalanceInfoService userBalanceInfoService;
 
     //region mybatis代码
 
@@ -106,14 +111,30 @@ public class PayHistoryInfoServiceImpl extends ServiceImpl<PayHistoryInfoMapper,
         if (StringUtils.isNull(reserveRoomHistoryInfo)) {
             throw new ServiceException("订房信息不存在！！！");
         }
+        //查询订单是否是待支付
+        if ( !reserveRoomHistoryInfo.getHistoryStatus().equals(Long.parseLong(RReverveStatus.REVERVE_STATUS_0.getValue()))) {
+            throw new ServiceException("该订单当前状态不可支付！！！");
+        }
         //查询是否已经支付
         List<PayHistoryInfo> list = this.list(new LambdaQueryWrapper<>(PayHistoryInfo.class).eq(PayHistoryInfo::getReserveId, payHistoryInfo.getReserveId()));
         if (StringUtils.isNotEmpty(list)) {
             throw new ServiceException("该订单已经支付！！！");
         }
+        //获取到用户余额
+        UserBalanceInfo userBalanceInfo = userBalanceInfoService.selectUserBalanceInfoByUserId(reserveRoomHistoryInfo.getUserId());
+        if (StringUtils.isNull(userBalanceInfo)) {
+            throw new ServiceException("余额不足！！！！！！");
+        }
+        //判断余额是否够
+        if (userBalanceInfo.getBalance().compareTo(reserveRoomHistoryInfo.getTotalPrice()) < 0) {
+            throw new ServiceException("余额不足！！！！！！");
+        }
+        //足够余额减去金额
+        userBalanceInfo.setBalance(userBalanceInfo.getBalance().subtract(reserveRoomHistoryInfo.getTotalPrice()));
+        userBalanceInfoService.updateUserBalanceInfo(userBalanceInfo);
+        payHistoryInfo.setPayPrice(reserveRoomHistoryInfo.getTotalPrice());
         payHistoryInfo.setUserId(reserveRoomHistoryInfo.getUserId());
         payHistoryInfo.setRoomId(reserveRoomHistoryInfo.getRoomId());
-        payHistoryInfo.setAuditStatus(Long.parseLong(RPayStatus.PAY_STATUS_0.getValue()));
         payHistoryInfo.setCreateTime(DateUtils.getNowDate());
         return payHistoryInfoMapper.insertPayHistoryInfo(payHistoryInfo);
     }
@@ -130,16 +151,6 @@ public class PayHistoryInfoServiceImpl extends ServiceImpl<PayHistoryInfoMapper,
         PayHistoryInfo payHistoryInfoOld = payHistoryInfoMapper.selectPayHistoryInfoByHistoryId(payHistoryInfo.getHistoryId());
         if (StringUtils.isNull(payHistoryInfoOld)) {
             throw new ServiceException("该订单不存在！！！");
-        }
-        if (payHistoryInfoOld.getAuditStatus().equals(Long.parseLong(RPayStatus.PAY_STATUS_1.getValue()))) {
-            throw new ServiceException("该订单审核已经通过！！！");
-        }
-        //如果传过来是通过
-        if (payHistoryInfo.getAuditStatus().equals(Long.parseLong(RPayStatus.PAY_STATUS_1.getValue()))) {
-            //更新订房状态
-            ReserveRoomHistoryInfo reserveRoomHistoryInfo = reserveRoomHistoryInfoService.selectReserveRoomHistoryInfoByHistoryId(payHistoryInfo.getReserveId());
-            reserveRoomHistoryInfo.setHistoryStatus(Long.parseLong(RReverveStatus.REVERVE_STATUS_1.getValue()));
-            reserveRoomHistoryInfoService.updateById(reserveRoomHistoryInfo);
         }
         payHistoryInfo.setUpdateTime(DateUtils.getNowDate());
         return payHistoryInfoMapper.updatePayHistoryInfo(payHistoryInfo);
@@ -187,9 +198,6 @@ public class PayHistoryInfoServiceImpl extends ServiceImpl<PayHistoryInfoMapper,
 
         Long userId = payHistoryInfoQuery.getUserId();
         queryWrapper.eq(StringUtils.isNotNull(userId), "user_id", userId);
-
-        Long auditStatus = payHistoryInfoQuery.getAuditStatus();
-        queryWrapper.eq(StringUtils.isNotNull(auditStatus), "audit_status", auditStatus);
 
         Date createTime = payHistoryInfoQuery.getCreateTime();
         queryWrapper.between(StringUtils.isNotNull(params.get("beginCreateTime")) && StringUtils.isNotNull(params.get("endCreateTime")), "create_time", params.get("beginCreateTime"), params.get("endCreateTime"));

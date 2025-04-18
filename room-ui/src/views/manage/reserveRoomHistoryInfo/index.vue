@@ -157,7 +157,6 @@
           <span>{{ parseTime(scope.row.reserveTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      </el-table-column>
       <el-table-column label="结束时间" align="center" v-if="columns[7].visible" prop="endTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
@@ -186,6 +185,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handlePay(scope.row)"
+            v-if="scope.row.historyStatus==='0'"
             v-hasPermi="['manage:payHistoryInfo:add']"
           >支付
           </el-button>
@@ -266,12 +266,12 @@
     <!-- 添加或修改支付记录对话框 -->
     <el-dialog :title="title" :visible.sync="payOpen" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="支付金额" prop="payPrice">
-          <el-input-number :min="0" :precision="2" v-model="form.payPrice" placeholder="请输入实际支付金额"/>
-        </el-form-item>
-        <el-form-item label="支付凭证" prop="payVoucher">
-          <image-upload :file-size="10" :limit="5" v-model="form.payVoucher"/>
-        </el-form-item>
+        <!--        <el-form-item label="支付金额" prop="payPrice">-->
+        <!--          <el-input-number :min="0" :precision="2" v-model="form.payPrice" placeholder="请输入实际支付金额"/>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="支付凭证" prop="payVoucher">-->
+        <!--          <image-upload :file-size="10" :limit="5" v-model="form.payVoucher"/>-->
+        <!--        </el-form-item>-->
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
         </el-form-item>

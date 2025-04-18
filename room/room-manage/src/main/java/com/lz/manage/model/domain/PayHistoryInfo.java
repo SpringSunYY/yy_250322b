@@ -62,17 +62,6 @@ public class PayHistoryInfo implements Serializable {
     @Excel(name = "实际支付金额")
     private BigDecimal payPrice;
 
-    /**
-     * 支付凭证
-     */
-    @Excel(name = "支付凭证")
-    private String payVoucher;
-
-    /**
-     * 审核状态（0待审核 1同意 2拒绝）
-     */
-    @Excel(name = "审核状态", readConverterExp = "0=待审核,1=同意,2=拒绝")
-    private Long auditStatus;
 
     /**
      * 创建时间

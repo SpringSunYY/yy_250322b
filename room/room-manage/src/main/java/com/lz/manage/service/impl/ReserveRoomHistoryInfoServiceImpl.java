@@ -247,9 +247,9 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
                 info.setHistoryStatus(Long.parseLong(RReverveStatus.REVERVE_STATUS_3.getValue()));
                 this.updateById(info);
                 //更新房间状态为空闲
-                RoomInfo roomInfo = roomInfoService.selectRoomInfoByRoomId(info.getRoomId());
-                roomInfo.setRoomStatus(Long.parseLong(RRoomStatus.ROOM_STATUS_0.getValue()));
-                roomInfoService.updateById(roomInfo);
+//                RoomInfo roomInfo = roomInfoService.selectRoomInfoByRoomId(info.getRoomId());
+//                roomInfo.setRoomStatus(Long.parseLong(RRoomStatus.ROOM_STATUS_0.getValue()));
+//                roomInfoService.updateById(roomInfo);
             }
             //判断创建时间是否是当前时间的十五分钟后后，如果是且状态还是待支付则直接修改状态为已结束
             if (info.getCreateTime().getTime() + 15 * 60 * 1000 < currentedTimeMillis && info.getHistoryStatus().equals(Long.parseLong(RReverveStatus.REVERVE_STATUS_0.getValue()))) {

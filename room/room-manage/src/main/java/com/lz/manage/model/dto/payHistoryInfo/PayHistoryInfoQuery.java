@@ -35,8 +35,6 @@ public class PayHistoryInfoQuery implements Serializable
     /** 用户 */
     private Long userId;
 
-    /** 审核状态（0待审核 1同意 2拒绝） */
-    private Long auditStatus;
 
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")

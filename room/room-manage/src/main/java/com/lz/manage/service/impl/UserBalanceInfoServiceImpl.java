@@ -170,4 +170,9 @@ public class UserBalanceInfoServiceImpl extends ServiceImpl<UserBalanceInfoMappe
         return this.saveOrUpdate(balanceInfo) ? balanceInfo : null;
     }
 
+    @Override
+    public UserBalanceInfo selectUserBalanceInfoByUserId(Long userId) {
+        return this.getOne(new LambdaQueryWrapper<UserBalanceInfo>().eq(UserBalanceInfo::getUserId, userId));
+    }
+
 }

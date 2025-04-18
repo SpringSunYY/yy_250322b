@@ -33,16 +33,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="审核状态" prop="auditStatus">
-        <el-select v-model="queryParams.auditStatus" placeholder="请选择审核状态" clearable>
-          <el-option
-            v-for="dict in dict.type.r_pay_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="daterangeCreateTime"
@@ -144,30 +134,20 @@
       <el-table-column label="实际支付金额" :show-overflow-tooltip="true" align="center" v-if="columns[4].visible"
                        prop="payPrice"
       />
-      <el-table-column label="支付凭证" align="center" v-if="columns[5].visible" prop="payVoucher" width="100">
-        <template slot-scope="scope">
-          <image-preview :src="scope.row.payVoucher" :width="50" :height="50"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="审核状态" align="center" v-if="columns[6].visible" prop="auditStatus">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.r_pay_status" :value="scope.row.auditStatus"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" align="center" v-if="columns[7].visible" prop="createTime" width="180">
+      <el-table-column label="创建时间" align="center" v-if="columns[5].visible" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新人" :show-overflow-tooltip="true" align="center" v-if="columns[8].visible"
+      <el-table-column label="更新人" :show-overflow-tooltip="true" align="center" v-if="columns[6].visible"
                        prop="updateBy"
       />
-      <el-table-column label="更新时间" align="center" v-if="columns[9].visible" prop="updateTime" width="180">
+      <el-table-column label="更新时间" align="center" v-if="columns[7].visible" prop="updateTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" :show-overflow-tooltip="true" align="center" v-if="columns[10].visible"
+      <el-table-column label="备注" :show-overflow-tooltip="true" align="center" v-if="columns[8].visible"
                        prop="remark"
       />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -213,10 +193,7 @@
         <!--          <el-input v-model="form.userId" placeholder="请输入用户"/>-->
         <!--        </el-form-item>-->
         <el-form-item label="实际支付金额" prop="payPrice">
-          <el-input v-model="form.payPrice" placeholder="请输入实际支付金额"/>
-        </el-form-item>
-        <el-form-item label="支付凭证" prop="payVoucher">
-          <image-upload v-model="form.payVoucher"/>
+          <el-input readonly v-model="form.payPrice" placeholder="请输入实际支付金额"/>
         </el-form-item>
         <el-form-item v-if="checkPermi(['manage:payhistory:audit'])" label="审核状态" prop="auditStatus">
           <el-radio-group v-model="form.auditStatus">
@@ -262,12 +239,10 @@ export default {
         { key: 2, label: '房间编号', visible: true },
         { key: 3, label: '用户', visible: true },
         { key: 4, label: '实际支付金额', visible: true },
-        { key: 5, label: '支付凭证', visible: true },
-        { key: 6, label: '审核状态', visible: true },
-        { key: 7, label: '创建时间', visible: false },
-        { key: 8, label: '更新人', visible: false },
-        { key: 9, label: '更新时间', visible: false },
-        { key: 10, label: '备注', visible: false }
+        { key: 5, label: '创建时间', visible: false },
+        { key: 6, label: '更新人', visible: false },
+        { key: 7, label: '更新时间', visible: false },
+        { key: 8, label: '备注', visible: false }
       ],
       // 遮罩层
       loading: true,

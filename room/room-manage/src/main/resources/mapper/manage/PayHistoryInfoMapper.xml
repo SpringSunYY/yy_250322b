@@ -10,8 +10,6 @@
         <result property="roomId" column="room_id"/>
         <result property="userId" column="user_id"/>
         <result property="payPrice" column="pay_price"/>
-        <result property="payVoucher" column="pay_voucher"/>
-        <result property="auditStatus" column="audit_status"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
@@ -24,8 +22,6 @@
                room_id,
                user_id,
                pay_price,
-               pay_voucher,
-               audit_status,
                create_time,
                update_by,
                update_time,
@@ -40,16 +36,11 @@
             <if test="reserveId != null ">and reserve_id = #{reserveId}</if>
             <if test="roomId != null ">and room_id = #{roomId}</if>
             <if test="userId != null ">and user_id = #{userId}</if>
-            <if test="auditStatus != null ">and audit_status = #{auditStatus}</if>
-            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
-                and DATE_FORMAT(create_time, '%Y-%m-%d') between #{params.beginCreateTime} and #{params.endCreateTime}
-            </if>
+            <if test="createTime != null ">and create_time like concat('%', #{createTime}, '%')</if>
             <if test="updateBy != null  and updateBy != ''">and update_by like concat('%', #{updateBy}, '%')</if>
             <if test="params.beginUpdateTime != null and params.beginUpdateTime != '' and params.endUpdateTime != null and params.endUpdateTime != ''">
-                and DATE_FORMAT(update_time, '%Y-%m-%d') between #{params.beginUpdateTime} and #{params.endUpdateTime}
+                and update_time between #{params.beginUpdateTime} and #{params.endUpdateTime}
             </if>
-            <!-- 数据范围过滤 -->
-            ${params.dataScope}
         </where>
     </select>
 
@@ -65,8 +56,6 @@
             <if test="roomId != null">room_id,</if>
             <if test="userId != null">user_id,</if>
             <if test="payPrice != null">pay_price,</if>
-            <if test="payVoucher != null and payVoucher != ''">pay_voucher,</if>
-            <if test="auditStatus != null">audit_status,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
@@ -77,8 +66,6 @@
             <if test="roomId != null">#{roomId},</if>
             <if test="userId != null">#{userId},</if>
             <if test="payPrice != null">#{payPrice},</if>
-            <if test="payVoucher != null and payVoucher != ''">#{payVoucher},</if>
-            <if test="auditStatus != null">#{auditStatus},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -93,8 +80,6 @@
             <if test="roomId != null">room_id = #{roomId},</if>
             <if test="userId != null">user_id = #{userId},</if>
             <if test="payPrice != null">pay_price = #{payPrice},</if>
-            <if test="payVoucher != null and payVoucher != ''">pay_voucher = #{payVoucher},</if>
-            <if test="auditStatus != null">audit_status = #{auditStatus},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>

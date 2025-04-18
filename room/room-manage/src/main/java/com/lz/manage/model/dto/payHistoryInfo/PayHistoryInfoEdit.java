@@ -33,12 +33,6 @@ public class PayHistoryInfoEdit implements Serializable
     /** 实际支付金额 */
     private BigDecimal payPrice;
 
-    /** 支付凭证 */
-    private String payVoucher;
-
-    /** 审核状态（0待审核 1同意 2拒绝） */
-    private Long auditStatus;
-
     /** 备注 */
     private String remark;
 
