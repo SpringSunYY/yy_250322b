@@ -9,13 +9,24 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="用户" prop="userId">
-        <el-input
+      <el-form-item label="用户" prop="userId" v-if="isQueryUser">
+        <el-select
           v-model="queryParams.userId"
-          placeholder="请输入用户ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入用户账号"
+          :remote-method="selectUserList"
+          :loading="userServiceLoading"
+        >
+          <el-option
+            v-for="item in userServiceList"
+            :key="item.userId"
+            :label="item.userName"
+            :value="item.userId"
+          >
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="当前余额" prop="balance">
         <el-input
