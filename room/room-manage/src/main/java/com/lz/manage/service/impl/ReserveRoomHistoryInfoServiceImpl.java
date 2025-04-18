@@ -35,6 +35,9 @@ import com.lz.manage.service.IReserveRoomHistoryInfoService;
 import com.lz.manage.model.dto.reserveRoomHistoryInfo.ReserveRoomHistoryInfoQuery;
 import com.lz.manage.model.vo.reserveRoomHistoryInfo.ReserveRoomHistoryInfoVo;
 
+import static com.lz.common.utils.DateUtils.HH_MM_SS;
+import static com.lz.common.utils.DateUtils.YYYY_MM_DD;
+
 /**
  * 订房记录Service业务层处理
  *
@@ -105,13 +108,36 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
         if (!roomInfo.getRoomStatus().equals(Long.parseLong(RRoomStatus.ROOM_STATUS_0.getValue()))) {
             throw new ServiceException("房间当前状态不可订房！！！");
         }
+        //根据订房时间+天数判断获取结束时间
+        if (StringUtils.isNull(reserveRoomHistoryInfo.getReserveTime())) {
+            reserveRoomHistoryInfo.setReserveTime(DateUtils.getNowDate());
+        } else {
+            //后台传过来的是年月日，要加上当前的时分秒
+            //先强制格式化时间为年月日
+            String dateToStr = DateUtils.parseDateToStr(YYYY_MM_DD, reserveRoomHistoryInfo.getReserveTime());
+            //加上当前的时分秒
+            String hhmmss = DateUtils.parseDateToStr(HH_MM_SS, new Date());
+            reserveRoomHistoryInfo.setReserveTime(DateUtils.parseDate(dateToStr + " " + hhmmss));
+        }
+        //结束时间 订房时间+天数
+        reserveRoomHistoryInfo.setEndTime(DateUtils.addDays(reserveRoomHistoryInfo.getReserveTime(), reserveRoomHistoryInfo.getDayNum().intValue()));
+        //判断此时间段是否有订房记录
+        List<ReserveRoomHistoryInfo> list = reserveRoomHistoryInfoMapper.selectList(new LambdaQueryWrapper<>(ReserveRoomHistoryInfo.class)
+                .ge(ReserveRoomHistoryInfo::getReserveTime, reserveRoomHistoryInfo.getReserveTime())
+                .le(ReserveRoomHistoryInfo::getEndTime, reserveRoomHistoryInfo.getEndTime())
+                .eq(ReserveRoomHistoryInfo::getRoomId, reserveRoomHistoryInfo.getRoomId())
+                .in(ReserveRoomHistoryInfo::getHistoryStatus, (Object) new Long[]{Long.parseLong(RReverveStatus.REVERVE_STATUS_0.getValue()), Long.parseLong(RReverveStatus.REVERVE_STATUS_1.getValue())})
+        );
+        if (StringUtils.isNotEmpty(list)) {
+            throw new ServiceException("房间当前时间段已经订房，不可再订房！！！");
+        }
+
         //更新房间为已定房
-        roomInfo.setRoomStatus(Long.parseLong(RRoomStatus.ROOM_STATUS_1.getValue()));
+//        roomInfo.setRoomStatus(Long.parseLong(RRoomStatus.ROOM_STATUS_1.getValue()));
         roomInfo.setReserveNum(roomInfo.getReserveNum() + 1);
         roomInfoService.updateById(roomInfo);
         //计算价格
         reserveRoomHistoryInfo.setTotalPrice(roomInfo.getRoomPrice().multiply(new BigDecimal(reserveRoomHistoryInfo.getDayNum())));
-        reserveRoomHistoryInfo.setReserveTime(DateUtils.getNowDate());
         reserveRoomHistoryInfo.setUserId(SecurityUtils.getUserId());
         reserveRoomHistoryInfo.setCreateTime(DateUtils.getNowDate());
         return reserveRoomHistoryInfoMapper.insertReserveRoomHistoryInfo(reserveRoomHistoryInfo);
@@ -223,6 +249,15 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
                 //更新房间状态为空闲
                 RoomInfo roomInfo = roomInfoService.selectRoomInfoByRoomId(info.getRoomId());
                 roomInfo.setRoomStatus(Long.parseLong(RRoomStatus.ROOM_STATUS_0.getValue()));
+                roomInfoService.updateById(roomInfo);
+            }
+            //判断创建时间是否是当前时间的十五分钟后后，如果是且状态还是待支付则直接修改状态为已结束
+            if (info.getCreateTime().getTime() + 15 * 60 * 1000 < currentedTimeMillis && info.getHistoryStatus().equals(Long.parseLong(RReverveStatus.REVERVE_STATUS_0.getValue()))) {
+                info.setHistoryStatus(Long.parseLong(RReverveStatus.REVERVE_STATUS_4.getValue()));
+                this.updateById(info);
+                //更新房间预定数
+                RoomInfo roomInfo = roomInfoService.selectRoomInfoByRoomId(info.getRoomId());
+                roomInfo.setReserveNum(roomInfo.getReserveNum() - 1);
                 roomInfoService.updateById(roomInfo);
             }
         }

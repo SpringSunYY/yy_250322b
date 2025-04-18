@@ -39,6 +39,10 @@ public class ReserveRoomHistoryInfoQuery implements Serializable
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date reserveTime;
 
+    /** 结束时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date endTime;
+
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createTime;

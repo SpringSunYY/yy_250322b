@@ -157,20 +157,26 @@
           <span>{{ parseTime(scope.row.reserveTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" v-if="columns[7].visible" prop="createTime" width="180">
+      </el-table-column>
+      <el-table-column label="结束时间" align="center" v-if="columns[7].visible" prop="endTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" align="center" v-if="columns[8].visible" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新人" :show-overflow-tooltip="true" align="center" v-if="columns[8].visible"
+      <el-table-column label="更新人" :show-overflow-tooltip="true" align="center" v-if="columns[9].visible"
                        prop="updateBy"
       />
-      <el-table-column label="更新时间" align="center" v-if="columns[9].visible" prop="updateTime" width="180">
+      <el-table-column label="更新时间" align="center" v-if="columns[10].visible" prop="updateTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" :show-overflow-tooltip="true" align="center" v-if="columns[10].visible"
+      <el-table-column label="备注" :show-overflow-tooltip="true" align="center" v-if="columns[11].visible"
                        prop="remark"
       />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -304,10 +310,11 @@ export default {
         { key: 4, label: '订单总价', visible: true },
         { key: 5, label: '状态', visible: true },
         { key: 6, label: '订房时间', visible: true },
-        { key: 7, label: '创建时间', visible: false },
-        { key: 8, label: '更新人', visible: false },
-        { key: 9, label: '更新时间', visible: false },
-        { key: 10, label: '备注', visible: false }
+        { key: 7, label: '订房时间', visible: true },
+        { key: 8, label: '创建时间', visible: false },
+        { key: 9, label: '更新人', visible: false },
+        { key: 10, label: '更新时间', visible: false },
+        { key: 11, label: '备注', visible: false }
       ],
       // 遮罩层
       loading: true,

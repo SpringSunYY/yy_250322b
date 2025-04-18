@@ -46,25 +46,25 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="更新人" prop="updateBy">
-        <el-input
-          v-model="queryParams.updateBy"
-          placeholder="请输入更新人"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="更新时间">
-        <el-date-picker
-          v-model="daterangeUpdateTime"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </el-form-item>
+<!--      <el-form-item label="更新人" prop="updateBy">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.updateBy"-->
+<!--          placeholder="请输入更新人"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="更新时间">-->
+<!--        <el-date-picker-->
+<!--          v-model="daterangeUpdateTime"-->
+<!--          style="width: 240px"-->
+<!--          value-format="yyyy-MM-dd"-->
+<!--          type="daterange"-->
+<!--          range-separator="-"-->
+<!--          start-placeholder="开始日期"-->
+<!--          end-placeholder="结束日期"-->
+<!--        ></el-date-picker>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -250,15 +250,15 @@
         <el-form-item label="订房天数" prop="dayNum">
           <el-input-number :min="1" v-model="form.dayNum" placeholder="请输入订房天数"/>
         </el-form-item>
-        <!--        <el-form-item label="订房时间" prop="reserveTime">-->
-        <!--          <el-date-picker clearable-->
-        <!--                          v-model="form.reserveTime"-->
-        <!--                          type="date"-->
-        <!--                          value-format="yyyy-MM-dd"-->
-        <!--                          placeholder="请选择订房时间"-->
-        <!--          >-->
-        <!--          </el-date-picker>-->
-        <!--        </el-form-item>-->
+        <el-form-item label="订房时间" prop="reserveTime">
+          <el-date-picker clearable
+                          v-model="form.reserveTime"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择订房时间"
+          >
+          </el-date-picker>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
         </el-form-item>

@@ -12,6 +12,7 @@
         <result property="totalPrice" column="total_price"/>
         <result property="historyStatus" column="history_status"/>
         <result property="reserveTime" column="reserve_time"/>
+        <result property="endTime" column="end_time"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
@@ -26,6 +27,7 @@
                total_price,
                history_status,
                reserve_time,
+               end_time,
                create_time,
                update_by,
                update_time,
@@ -40,20 +42,24 @@
             <if test="historyId != null ">and history_id = #{historyId}</if>
             <if test="roomId != null ">and room_id = #{roomId}</if>
             <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="dayNum != null ">and day_num = #{dayNum}</if>
+            <if test="totalPrice != null ">and total_price = #{totalPrice}</if>
             <if test="historyStatus != null ">and history_status = #{historyStatus}</if>
             <if test="params.beginReserveTime != null and params.beginReserveTime != '' and params.endReserveTime != null and params.endReserveTime != ''">
-                and DATE_FORMAT(reserve_time, '%Y-%m-%d') between #{params.beginReserveTime} and #{params.endReserveTime}
+                and reserve_time between #{params.beginReserveTime} and #{params.endReserveTime}
+            </if>
+            <if test="params.beginEndTime != null and params.beginEndTime != '' and params.endEndTime != null and params.endEndTime != ''">
+                and end_time between #{params.beginEndTime} and #{params.endEndTime}
             </if>
             <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
-                and DATE_FORMAT(create_time, '%Y-%m-%d') between #{params.beginCreateTime} and #{params.endCreateTime}
+                and create_time between #{params.beginCreateTime} and #{params.endCreateTime}
             </if>
             <if test="updateBy != null  and updateBy != ''">and update_by like concat('%', #{updateBy}, '%')</if>
             <if test="params.beginUpdateTime != null and params.beginUpdateTime != '' and params.endUpdateTime != null and params.endUpdateTime != ''">
-                and DATE_FORMAT(update_time, '%Y-%m-%d') between #{params.beginUpdateTime} and #{params.endUpdateTime}
+                and update_time between #{params.beginUpdateTime} and #{params.endUpdateTime}
             </if>
-            <!-- 数据范围过滤 -->
-            ${params.dataScope}
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectReserveRoomHistoryInfoByHistoryId" parameterType="Long" resultMap="ReserveRoomHistoryInfoResult">
@@ -71,6 +77,7 @@
             <if test="totalPrice != null">total_price,</if>
             <if test="historyStatus != null">history_status,</if>
             <if test="reserveTime != null">reserve_time,</if>
+            <if test="endTime != null">end_time,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
@@ -83,6 +90,7 @@
             <if test="totalPrice != null">#{totalPrice},</if>
             <if test="historyStatus != null">#{historyStatus},</if>
             <if test="reserveTime != null">#{reserveTime},</if>
+            <if test="endTime != null">#{endTime},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -99,6 +107,7 @@
             <if test="totalPrice != null">total_price = #{totalPrice},</if>
             <if test="historyStatus != null">history_status = #{historyStatus},</if>
             <if test="reserveTime != null">reserve_time = #{reserveTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
