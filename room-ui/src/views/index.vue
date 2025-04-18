@@ -3,23 +3,75 @@
     <el-row :gutter="20">
 
       <h1 style="font-size: 36px;text-align: center">酒店管理系统</h1>
-
+      <el-row :gutter="20">
+        <el-col :xs="24" :sm="4" :lg="4" v-for="(item,index) in roomInfoList" :key="index">
+          <el-card class="box-card" shadow="hover">
+            <image-preview :src="item.roomImage" :width="200" :height="200"/>
+            <div>
+              <el-row :gutter="20">
+                <el-col :xs="24" :sm="12" :lg="12">
+                  <div>
+                    <span style="font-size: 12px;">房间号：</span>
+                    <span style="font-size: 12px;">{{ item.roomId }}</span>
+                  </div>
+                </el-col>
+                <el-col :xs="24" :sm="12" :lg="12">
+                  <div>
+                    <span style="font-size: 12px;">房间名称：</span>
+                    <span style="font-size: 12px;">{{ item.roomName }}</span>
+                  </div>
+                </el-col>
+                <el-col :xs="24" :sm="24" :lg="24">
+                  <el-button type="primary" @click="toRoomDetail(item)">查看详情</el-button>
+                </el-col>
+              </el-row>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
     </el-row>
   </div>
 </template>
 
 <script>
+import { listRoomInfo } from '@/api/manage/roomInfo'
+
 export default {
   name: 'Index',
   data() {
     return {
       // 版本号
-      version: '3.8.9'
+      version: '3.8.9',
+      // 酒店房间信息表格数据
+      roomInfoList: [],
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 100,
+        roomId: null,
+        roomName: null,
+        // roomStatus: '1',
+        userId: null,
+        createTime: null,
+        updateBy: null,
+        updateTime: null
+      }
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
-    goTarget(href) {
-      window.open(href, '_blank')
+    /** 查询酒店房间信息列表 */
+    getList() {
+      listRoomInfo(this.queryParams).then(response => {
+        this.roomInfoList = response.rows
+        this.total = response.total
+        this.loading = false
+      })
+    },
+    toRoomDetail(row) {
+      this.$router.push({ path: '/manage/roomDetail/index/'+row.roomId })
     }
   }
 }

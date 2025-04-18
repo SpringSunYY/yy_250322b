@@ -133,6 +133,19 @@ export const dynamicRoutes = [
         meta: { title: '字典数据', activeMenu: '/system/dict' }
       }
     ]
+  }, {
+    path: '/manage/roomDetail',
+    component: Layout,
+    hidden: true,
+    permissions: ['manage:roomInfo:list'],
+    children: [
+      {
+        path: 'index/:roomId(\\d+)',
+        component: () => import('@/views/manage/roomInfo/detail'),
+        name: 'Data',
+        meta: { title: '房间信息', activeMenu: '/index' }
+      }
+    ]
   },
   {
     path: '/monitor/job-log',

@@ -70,7 +70,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['manage:roomCommentInfo:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -81,7 +82,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['manage:roomCommentInfo:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -92,7 +94,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['manage:roomCommentInfo:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -102,30 +105,41 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['manage:roomCommentInfo:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="roomCommentInfoList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="评论ID" align="center" v-if="columns[0].visible" prop="id" />
-        <el-table-column label="房间" :show-overflow-tooltip="true" align="center" v-if="columns[1].visible" prop="roomId" />
-        <el-table-column label="评论用户" :show-overflow-tooltip="true" align="center" v-if="columns[2].visible" prop="userId" />
-        <el-table-column label="评分" :show-overflow-tooltip="true" align="center" v-if="columns[3].visible" prop="score" />
-        <el-table-column label="评论内容" :show-overflow-tooltip="true" align="center" v-if="columns[4].visible" prop="content" />
-        <el-table-column label="评论图片" :show-overflow-tooltip="true" align="center" v-if="columns[5].visible" prop="imageUrls" />
-        <el-table-column label="创建时间" align="center" v-if="columns[6].visible" prop="createTime" width="180">
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="评论ID" align="center" v-if="columns[0].visible" prop="id"/>
+      <el-table-column label="房间" :show-overflow-tooltip="true" align="center" v-if="columns[1].visible"
+                       prop="roomId"
+      />
+      <el-table-column label="评论用户" :show-overflow-tooltip="true" align="center" v-if="columns[2].visible"
+                       prop="userId"
+      />
+      <el-table-column label="评分" :show-overflow-tooltip="true" align="center" v-if="columns[3].visible"
+                       prop="score"
+      />
+      <el-table-column label="评论内容" :show-overflow-tooltip="true" align="center" v-if="columns[4].visible"
+                       prop="content"
+      />
+      <el-table-column label="评论图片" :show-overflow-tooltip="true" align="center" v-if="columns[5].visible"
+                       prop="imageUrls"
+      />
+      <el-table-column label="创建时间" align="center" v-if="columns[6].visible" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-        <el-table-column label="更新时间" align="center" v-if="columns[7].visible" prop="updateTime" width="180">
+      <el-table-column label="更新时间" align="center" v-if="columns[7].visible" prop="updateTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -133,14 +147,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['manage:roomCommentInfo:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['manage:roomCommentInfo:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -157,19 +173,19 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="房间" prop="roomId">
-          <el-input v-model="form.roomId" placeholder="请输入房间" />
+          <el-input v-model="form.roomId" placeholder="请输入房间"/>
         </el-form-item>
         <el-form-item label="评论用户" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入评论用户" />
+          <el-input v-model="form.userId" placeholder="请输入评论用户"/>
         </el-form-item>
         <el-form-item label="评分" prop="score">
-          <el-input v-model="form.score" placeholder="请输入评分" />
+          <el-input v-model="form.score" placeholder="请输入评分"/>
         </el-form-item>
         <el-form-item label="评论内容">
           <editor v-model="form.content" :min-height="192"/>
         </el-form-item>
         <el-form-item label="评论图片" prop="imageUrls">
-          <el-input v-model="form.imageUrls" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.imageUrls" type="textarea" placeholder="请输入内容"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -181,23 +197,29 @@
 </template>
 
 <script>
-import { listRoomCommentInfo, getRoomCommentInfo, delRoomCommentInfo, addRoomCommentInfo, updateRoomCommentInfo } from "@/api/manage/roomCommentInfo";
+import {
+  listRoomCommentInfo,
+  getRoomCommentInfo,
+  delRoomCommentInfo,
+  addRoomCommentInfo,
+  updateRoomCommentInfo
+} from '@/api/manage/roomCommentInfo'
 
 export default {
-  name: "RoomCommentInfo",
+  name: 'RoomCommentInfo',
   data() {
     return {
       //表格展示列
       columns: [
         { key: 0, label: '评论ID', visible: true },
-          { key: 1, label: '房间', visible: true },
-          { key: 2, label: '评论用户', visible: true },
-          { key: 3, label: '评分', visible: true },
-          { key: 4, label: '评论内容', visible: true },
-          { key: 5, label: '评论图片', visible: true },
-          { key: 6, label: '创建时间', visible: true },
-          { key: 7, label: '更新时间', visible: true },
-        ],
+        { key: 1, label: '房间', visible: true },
+        { key: 2, label: '评论用户', visible: true },
+        { key: 3, label: '评分', visible: true },
+        { key: 4, label: '评论内容', visible: true },
+        { key: 5, label: '评论图片', visible: true },
+        { key: 6, label: '创建时间', visible: true },
+        { key: 7, label: '更新时间', visible: true }
+      ],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -213,7 +235,7 @@ export default {
       // 房间评价表格数据
       roomCommentInfoList: [],
       // 弹出层标题
-      title: "",
+      title: '',
       // 是否显示弹出层
       open: false,
       // 更新时间时间范围
@@ -238,52 +260,52 @@ export default {
       // 表单校验
       rules: {
         roomId: [
-          { required: true, message: "房间不能为空", trigger: "blur" }
+          { required: true, message: '房间不能为空', trigger: 'blur' }
         ],
         userId: [
-          { required: true, message: "评论用户不能为空", trigger: "blur" }
+          { required: true, message: '评论用户不能为空', trigger: 'blur' }
         ],
         score: [
-          { required: true, message: "评分不能为空", trigger: "blur" }
+          { required: true, message: '评分不能为空', trigger: 'blur' }
         ],
         content: [
-          { required: true, message: "评论内容不能为空", trigger: "blur" }
+          { required: true, message: '评论内容不能为空', trigger: 'blur' }
         ],
         createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+          { required: true, message: '创建时间不能为空', trigger: 'blur' }
         ],
         updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
+          { required: true, message: '更新时间不能为空', trigger: 'blur' }
         ]
       }
-    };
+    }
   },
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     /** 查询房间评价列表 */
     getList() {
-      this.loading = true;
-      this.queryParams.params = {};
+      this.loading = true
+      this.queryParams.params = {}
       if (null != this.daterangeCreateTime && '' != this.daterangeCreateTime) {
-        this.queryParams.params["beginCreateTime"] = this.daterangeCreateTime[0];
-        this.queryParams.params["endCreateTime"] = this.daterangeCreateTime[1];
+        this.queryParams.params['beginCreateTime'] = this.daterangeCreateTime[0]
+        this.queryParams.params['endCreateTime'] = this.daterangeCreateTime[1]
       }
       if (null != this.daterangeUpdateTime && '' != this.daterangeUpdateTime) {
-        this.queryParams.params["beginUpdateTime"] = this.daterangeUpdateTime[0];
-        this.queryParams.params["endUpdateTime"] = this.daterangeUpdateTime[1];
+        this.queryParams.params['beginUpdateTime'] = this.daterangeUpdateTime[0]
+        this.queryParams.params['endUpdateTime'] = this.daterangeUpdateTime[1]
       }
       listRoomCommentInfo(this.queryParams).then(response => {
-        this.roomCommentInfoList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+        this.roomCommentInfoList = response.rows
+        this.total = response.total
+        this.loading = false
+      })
     },
     // 取消按钮
     cancel() {
-      this.open = false;
-      this.reset();
+      this.open = false
+      this.reset()
     },
     // 表单重置
     reset() {
@@ -296,72 +318,73 @@ export default {
         imageUrls: null,
         createTime: null,
         updateTime: null
-      };
-      this.resetForm("form");
+      }
+      this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
+      this.queryParams.pageNum = 1
+      this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.daterangeCreateTime = [];
-      this.daterangeUpdateTime = [];
-      this.resetForm("queryForm");
-      this.handleQuery();
+      this.daterangeCreateTime = []
+      this.daterangeUpdateTime = []
+      this.resetForm('queryForm')
+      this.handleQuery()
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加房间评价";
+      this.reset()
+      this.open = true
+      this.title = '添加房间评价'
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
+      this.reset()
       const id = row.id || this.ids
       getRoomCommentInfo(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改房间评价";
-      });
+        this.form = response.data
+        this.open = true
+        this.title = '修改房间评价'
+      })
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
             updateRoomCommentInfo(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
+              this.$modal.msgSuccess('修改成功')
+              this.open = false
+              this.getList()
+            })
           } else {
             addRoomCommentInfo(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
+              this.$modal.msgSuccess('新增成功')
+              this.open = false
+              this.getList()
+            })
           }
         }
-      });
+      })
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
+      const ids = row.id || this.ids
       this.$modal.confirm('是否确认删除房间评价编号为"' + ids + '"的数据项？').then(function() {
-        return delRoomCommentInfo(ids);
+        return delRoomCommentInfo(ids)
       }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+        this.getList()
+        this.$modal.msgSuccess('删除成功')
+      }).catch(() => {
+      })
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -370,5 +393,5 @@ export default {
       }, `roomCommentInfo_${new Date().getTime()}.xlsx`)
     }
   }
-};
+}
 </script>
