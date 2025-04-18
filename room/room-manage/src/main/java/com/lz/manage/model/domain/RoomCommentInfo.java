@@ -32,10 +32,14 @@ public class RoomCommentInfo implements Serializable
 
     /** 房间 */
     @Excel(name = "房间")
+    @TableField(exist = false)
+    private String roomName;
     private Long roomId;
 
     /** 评论用户 */
     @Excel(name = "评论用户")
+    @TableField(exist = false)
+    private String userName;
     private Long userId;
 
     /** 评分 */

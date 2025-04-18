@@ -62,17 +62,17 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['manage:roomCommentInfo:add']"
-        >新增
-        </el-button>
-      </el-col>
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="primary"-->
+      <!--          plain-->
+      <!--          icon="el-icon-plus"-->
+      <!--          size="mini"-->
+      <!--          @click="handleAdd"-->
+      <!--          v-hasPermi="['manage:roomCommentInfo:add']"-->
+      <!--        >新增-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -115,10 +115,10 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="评论ID" align="center" v-if="columns[0].visible" prop="id"/>
       <el-table-column label="房间" :show-overflow-tooltip="true" align="center" v-if="columns[1].visible"
-                       prop="roomId"
+                       prop="roomName"
       />
       <el-table-column label="评论用户" :show-overflow-tooltip="true" align="center" v-if="columns[2].visible"
-                       prop="userId"
+                       prop="userName"
       />
       <el-table-column label="评分" :show-overflow-tooltip="true" align="center" v-if="columns[3].visible"
                        prop="score"
@@ -185,7 +185,7 @@
           <editor v-model="form.content" :min-height="192"/>
         </el-form-item>
         <el-form-item label="评论图片" prop="imageUrls">
-          <el-input v-model="form.imageUrls" type="textarea" placeholder="请输入内容"/>
+          <image-upload v-model="form.imageUrls"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -211,14 +211,14 @@ export default {
     return {
       //表格展示列
       columns: [
-        { key: 0, label: '评论ID', visible: true },
+        { key: 0, label: '评论ID', visible: false },
         { key: 1, label: '房间', visible: true },
         { key: 2, label: '评论用户', visible: true },
         { key: 3, label: '评分', visible: true },
         { key: 4, label: '评论内容', visible: true },
         { key: 5, label: '评论图片', visible: true },
         { key: 6, label: '创建时间', visible: true },
-        { key: 7, label: '更新时间', visible: true }
+        { key: 7, label: '更新时间', visible: false }
       ],
       // 遮罩层
       loading: true,

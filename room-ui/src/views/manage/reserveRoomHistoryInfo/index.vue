@@ -213,8 +213,18 @@
             type="text"
             icon="el-icon-edit"
             @click="handleReturn(scope.row)"
+            v-if="scope.row.historyStatus==='1'"
             v-hasPermi="['manage:reserveRoomHistoryInfo:edit']"
           >退房
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            v-if="scope.row.historyStatus==='2'||scope.row.historyStatus==='3'"
+            @click="handleComment(scope.row)"
+            v-hasPermi="['manage:reserveRoomHistoryInfo:edit']"
+          >评价
           </el-button>
           <el-button
             size="mini"
@@ -292,6 +302,31 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 添加或修改房间评价对话框 -->
+    <el-dialog :title="title" :visible.sync="openComment" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+<!--        <el-form-item label="房间" prop="roomId">-->
+<!--          <el-input v-model="form.roomId" placeholder="请输入房间"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="评论用户" prop="userId">-->
+<!--          <el-input v-model="form.userId" placeholder="请输入评论用户"/>-->
+<!--        </el-form-item>-->
+        <el-form-item label="评分" prop="score">
+          <el-input-number :min="0" :man="5" v-model="form.score" placeholder="请输入评分"/>
+        </el-form-item>
+        <el-form-item label="评论内容">
+          <el-input type="textarea" placeholder="请输入评论内容" v-model="form.content" :min-height="192"/>
+        </el-form-item>
+        <el-form-item label="评论图片" prop="imageUrls">
+          <image-upload v-model="form.imageUrls"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitComment">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -306,12 +341,15 @@ import {
 import { addPayHistoryInfo } from '@/api/manage/payHistoryInfo'
 import { listUser } from '@/api/system/user'
 import { checkPermi } from '@/utils/permission'
+import { addRoomCommentInfo } from '@/api/manage/roomCommentInfo'
 
 export default {
   name: 'ReserveRoomHistoryInfo',
   dicts: ['r_reverve_status'],
   data() {
     return {
+      //评论
+      openComment: false,
       isQueryUser: false,
       //用户信息
       userServiceList: [],
@@ -460,7 +498,21 @@ export default {
         })
       }).catch(function() {
       }).finally(function() {
-
+      })
+    },
+    handleComment(row) {
+      this.reset()
+      this.title = '添加评论--' + row.roomName
+      this.openComment = true
+      this.form.userId = row.userId
+      this.form.reserveId = row.historyId
+      this.form.roomId = row.roomId
+    },
+    submitComment(){
+      addRoomCommentInfo(this.form).then(res => {
+        this.$modal.msgSuccess('评论成功')
+        this.openComment = false
+        this.getList()
       })
     },
     handlePay(row) {
@@ -503,6 +555,7 @@ export default {
     cancel() {
       this.open = false
       this.payOpen = false
+      this.openComment = false
       this.reset()
     },
     // 表单重置

@@ -108,6 +108,7 @@ export default {
     const roomId = this.$route.params && this.$route.params.roomId
     this.form.roomId = roomId
     this.getRoomInfo(roomId)
+    this.fetchRoomComments()
   },
   methods: {
     //预定房间
