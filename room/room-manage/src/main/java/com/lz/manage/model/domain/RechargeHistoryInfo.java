@@ -33,6 +33,8 @@ public class RechargeHistoryInfo implements Serializable
 
     /** 用户 */
     @Excel(name = "用户")
+    @TableField(exist = false)
+    private String userName;
     private Long userId;
 
     /** 充值价格 */

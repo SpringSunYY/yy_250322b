@@ -27,6 +27,7 @@ public class RechargeHistoryInfoVo implements Serializable
 
     /** 用户 */
     @Excel(name = "用户")
+    private String userName;
     private Long userId;
 
     /** 充值价格 */

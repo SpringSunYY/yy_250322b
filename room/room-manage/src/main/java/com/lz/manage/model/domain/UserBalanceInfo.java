@@ -32,7 +32,9 @@ public class UserBalanceInfo implements Serializable
     private Long id;
 
     /** 用户ID */
-    @Excel(name = "用户ID")
+    @Excel(name = "用户")
+    @TableField(exist = false)
+    private String userName;
     private Long userId;
 
     /** 当前余额 */

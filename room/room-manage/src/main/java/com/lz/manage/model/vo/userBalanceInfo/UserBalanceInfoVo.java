@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.math.BigDecimal;
 import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import com.lz.common.annotation.Excel;
 import org.springframework.beans.BeanUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lz.manage.model.domain.UserBalanceInfo;
+
 /**
  * 用户余额Vo对象 tb_user_balance_info
  *
@@ -17,34 +19,44 @@ import com.lz.manage.model.domain.UserBalanceInfo;
  * @date 2025-04-17
  */
 @Data
-public class UserBalanceInfoVo implements Serializable
-{
+public class UserBalanceInfoVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     @Excel(name = "主键ID")
     private Long id;
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     @Excel(name = "用户ID")
+    private String userName;
     private Long userId;
 
-    /** 当前余额 */
+    /**
+     * 当前余额
+     */
     @Excel(name = "当前余额")
     private BigDecimal balance;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updateTime;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date createTime;
 
 
-     /**
+    /**
      * 对象转封装类
      *
      * @param userBalanceInfo UserBalanceInfo实体对象
