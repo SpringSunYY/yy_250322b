@@ -122,11 +122,12 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
         //结束时间 订房时间+天数
         reserveRoomHistoryInfo.setEndTime(DateUtils.addDays(reserveRoomHistoryInfo.getReserveTime(), reserveRoomHistoryInfo.getDayNum().intValue()));
         //判断此时间段是否有订房记录
-        List<ReserveRoomHistoryInfo> list = reserveRoomHistoryInfoMapper.selectList(new LambdaQueryWrapper<>(ReserveRoomHistoryInfo.class)
-                .ge(ReserveRoomHistoryInfo::getReserveTime, reserveRoomHistoryInfo.getReserveTime())
-                .le(ReserveRoomHistoryInfo::getEndTime, reserveRoomHistoryInfo.getEndTime())
-                .eq(ReserveRoomHistoryInfo::getRoomId, reserveRoomHistoryInfo.getRoomId())
-                .in(ReserveRoomHistoryInfo::getHistoryStatus, (Object) new Long[]{Long.parseLong(RReverveStatus.REVERVE_STATUS_0.getValue()), Long.parseLong(RReverveStatus.REVERVE_STATUS_1.getValue())})
+        List<ReserveRoomHistoryInfo> list = reserveRoomHistoryInfoMapper.selectList(
+                new LambdaQueryWrapper<>(ReserveRoomHistoryInfo.class)
+                        .lt(ReserveRoomHistoryInfo::getReserveTime, reserveRoomHistoryInfo.getEndTime()) // 现有订单开始 < 新订单结束
+                        .gt(ReserveRoomHistoryInfo::getEndTime, reserveRoomHistoryInfo.getReserveTime()) // 现有订单结束 > 新订单开始
+                        .eq(ReserveRoomHistoryInfo::getRoomId, reserveRoomHistoryInfo.getRoomId())
+                        .in(ReserveRoomHistoryInfo::getHistoryStatus, 0L, 1L)
         );
         if (StringUtils.isNotEmpty(list)) {
             throw new ServiceException("房间当前时间段已经订房，不可再订房！！！");

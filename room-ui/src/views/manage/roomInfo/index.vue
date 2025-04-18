@@ -46,25 +46,25 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-<!--      <el-form-item label="更新人" prop="updateBy">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.updateBy"-->
-<!--          placeholder="请输入更新人"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item label="更新时间">-->
-<!--        <el-date-picker-->
-<!--          v-model="daterangeUpdateTime"-->
-<!--          style="width: 240px"-->
-<!--          value-format="yyyy-MM-dd"-->
-<!--          type="daterange"-->
-<!--          range-separator="-"-->
-<!--          start-placeholder="开始日期"-->
-<!--          end-placeholder="结束日期"-->
-<!--        ></el-date-picker>-->
-<!--      </el-form-item>-->
+      <!--      <el-form-item label="更新人" prop="updateBy">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.updateBy"-->
+      <!--          placeholder="请输入更新人"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="更新时间">-->
+      <!--        <el-date-picker-->
+      <!--          v-model="daterangeUpdateTime"-->
+      <!--          style="width: 240px"-->
+      <!--          value-format="yyyy-MM-dd"-->
+      <!--          type="daterange"-->
+      <!--          range-separator="-"-->
+      <!--          start-placeholder="开始日期"-->
+      <!--          end-placeholder="结束日期"-->
+      <!--        ></el-date-picker>-->
+      <!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -247,6 +247,25 @@
     <!-- 添加或修改订房记录对话框 -->
     <el-dialog :title="title" :visible.sync="openReserve" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="用户" prop="userId" v-if="isQueryUser">
+          <el-select
+            v-model="form.userId"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入用户账号"
+            :remote-method="selectUserList"
+            :loading="userServiceLoading"
+          >
+            <el-option
+              v-for="item in userServiceList"
+              :key="item.userId"
+              :label="item.userName"
+              :value="item.userId"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="订房天数" prop="dayNum">
           <el-input-number :min="1" v-model="form.dayNum" placeholder="请输入订房天数"/>
         </el-form-item>
@@ -274,12 +293,23 @@
 <script>
 import { listRoomInfo, getRoomInfo, delRoomInfo, addRoomInfo, updateRoomInfo } from '@/api/manage/roomInfo'
 import { addReserveRoomHistoryInfo } from '@/api/manage/reserveRoomHistoryInfo'
+import { checkPermi } from '@/utils/permission'
+import { listUser } from '@/api/system/user'
 
 export default {
   name: 'RoomInfo',
   dicts: ['r_room_status'],
   data() {
     return {
+      isQueryUser: false,
+      //用户信息
+      userServiceList: [],
+      userServiceLoading: false,
+      userServiceQueryParams: {
+        userName: '',
+        pageNum: 1,
+        pageSize: 10
+      },
       openReserve: false,
       //表格展示列
       columns: [
@@ -356,9 +386,47 @@ export default {
     }
   },
   created() {
+    if (checkPermi(['manage:rechargeHistoryInfo:audit'])) {
+      this.isQueryUser = true
+      this.getUserList()
+    }
     this.getList()
   },
   methods: {
+    checkPermi,
+    /**
+     * 获取用户列表推荐
+     * @param query
+     */
+    selectUserList(query) {
+      if (query !== '') {
+        this.userServiceLoading = true
+        this.userServiceQueryParams.userName = query
+        setTimeout(() => {
+          this.getUserList()
+        }, 200)
+      } else {
+        this.userServiceList = []
+      }
+    },
+    /**
+     * 获取用户信息列表
+     */
+    getUserList() {
+      //添加查询参数
+      if (this.form.userId != null) {
+        this.userServiceQueryParams.userId = this.form.userId
+      } else {
+        this.userServiceQueryParams.userId = null
+      }
+      if (this.userServiceQueryParams.userName != null) {
+        this.userServiceQueryParams.userId = null
+      }
+      listUser(this.userServiceQueryParams).then(res => {
+        this.userServiceList = res.rows
+        this.userServiceLoading = false
+      })
+    },
     //预定房间
     handleReserve(row) {
       this.title = '预定房间--' + row.roomName
