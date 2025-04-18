@@ -22,9 +22,12 @@ import com.lz.common.utils.DateUtils;
 import javax.annotation.Resource;
 
 import com.lz.manage.model.domain.RoomInfo;
+import com.lz.manage.model.domain.UserBalanceInfo;
 import com.lz.manage.model.enums.RReverveStatus;
 import com.lz.manage.model.enums.RRoomStatus;
 import com.lz.manage.service.IRoomInfoService;
+import com.lz.manage.service.IUserBalanceInfoService;
+import com.lz.system.service.ISysConfigService;
 import com.lz.system.service.ISysUserService;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -54,6 +57,12 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
 
     @Resource
     private ISysUserService sysUserService;
+
+    @Resource
+    private ISysConfigService configService;
+
+    @Resource
+    private IUserBalanceInfoService userBalanceInfoService;
 
     //region mybatis代码
 
@@ -152,15 +161,28 @@ public class ReserveRoomHistoryInfoServiceImpl extends ServiceImpl<ReserveRoomHi
      */
     @Override
     public int updateReserveRoomHistoryInfo(ReserveRoomHistoryInfo reserveRoomHistoryInfo) {
+        //查询数据库内容
+        ReserveRoomHistoryInfo reserveRoomHistoryInfoDb = reserveRoomHistoryInfoMapper.selectReserveRoomHistoryInfoByHistoryId(reserveRoomHistoryInfo.getHistoryId());
         //判断是否有房间
         RoomInfo roomInfo = roomInfoService.selectRoomInfoByRoomId(reserveRoomHistoryInfo.getRoomId());
         if (StringUtils.isNull(roomInfo)) {
             throw new ServiceException("房间不存在！！！");
         }
-        //如果传过来是退房
-        if (reserveRoomHistoryInfo.getHistoryStatus().equals(Long.parseLong(RReverveStatus.REVERVE_STATUS_2.getValue()))) {
+        //如果传过来是退房 并且数据库内容状态不是退房
+        if (reserveRoomHistoryInfo.getHistoryStatus().equals(Long.parseLong(RReverveStatus.REVERVE_STATUS_2.getValue()))
+                && !reserveRoomHistoryInfoDb.getHistoryStatus().equals(Long.parseLong(RReverveStatus.REVERVE_STATUS_2.getValue()))) {
             roomInfo.setRoomStatus(Long.parseLong(RRoomStatus.ROOM_STATUS_0.getValue()));
             roomInfoService.updateById(roomInfo);
+            //退还用户部分金额
+            String rate = configService.selectConfigByKey("return.price.rate");
+            BigDecimal returnPrice = reserveRoomHistoryInfo.getTotalPrice().multiply(new BigDecimal(rate));
+            UserBalanceInfo userBalanceInfo = userBalanceInfoService.selectUserBalanceInfoByUserId(reserveRoomHistoryInfoDb.getUserId());
+            if (StringUtils.isNull(userBalanceInfo)) {
+                throw new ServiceException("用户余额不存在！！！");
+            }
+            userBalanceInfo.setBalance(userBalanceInfo.getBalance().add(returnPrice));
+            userBalanceInfoService.updateUserBalanceInfo(userBalanceInfo);
+
         }
         reserveRoomHistoryInfo.setUpdateBy(SecurityUtils.getUsername());
         reserveRoomHistoryInfo.setUpdateTime(DateUtils.getNowDate());

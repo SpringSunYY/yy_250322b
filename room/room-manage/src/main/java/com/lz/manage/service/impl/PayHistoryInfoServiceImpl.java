@@ -129,6 +129,9 @@ public class PayHistoryInfoServiceImpl extends ServiceImpl<PayHistoryInfoMapper,
         if (userBalanceInfo.getBalance().compareTo(reserveRoomHistoryInfo.getTotalPrice()) < 0) {
             throw new ServiceException("余额不足！！！！！！");
         }
+        //更新订单状态
+        reserveRoomHistoryInfo.setHistoryStatus(Long.parseLong(RReverveStatus.REVERVE_STATUS_1.getValue()));
+        reserveRoomHistoryInfoService.updateReserveRoomHistoryInfo(reserveRoomHistoryInfo);
         //足够余额减去金额
         userBalanceInfo.setBalance(userBalanceInfo.getBalance().subtract(reserveRoomHistoryInfo.getTotalPrice()));
         userBalanceInfoService.updateUserBalanceInfo(userBalanceInfo);
