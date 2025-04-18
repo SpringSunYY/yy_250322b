@@ -14,8 +14,34 @@
       <p><strong>描述：</strong> {{ roomInfo.roomDesc }}</p>
       <p><strong>订房次数：</strong> {{ roomInfo.reserveNum }}</p>
       <p><strong>备注：</strong> {{ roomInfo.remark }}</p>
+      <p><strong>
+        <el-button type="text" @click="handleReserve">立即预定</el-button>
+      </strong></p>
     </el-card>
-
+    <!-- 添加或修改订房记录对话框 -->
+    <el-dialog :title="title" :visible.sync="openReserve" width="500px" append-to-body>
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="订房天数" prop="dayNum">
+          <el-input-number :min="1" v-model="form.dayNum" placeholder="请输入订房天数"/>
+        </el-form-item>
+        <el-form-item label="订房时间" prop="reserveTime">
+          <el-date-picker clearable
+                          v-model="form.reserveTime"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择订房时间"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitReserveForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
     <!-- 房间评论 -->
     <div class="comment-section">
       <h3>用户评论</h3>
@@ -45,11 +71,23 @@
 <script>
 import { getRoomCommentInfo } from '@/api/manage/roomCommentInfo'
 import { getRoomInfo } from '@/api/manage/roomInfo'
+import { addReserveRoomHistoryInfo } from '@/api/manage/reserveRoomHistoryInfo'
 
 export default {
   name: 'RoomDetail',
   data() {
     return {
+      openReserve: false,
+      form: {
+        roomId: '',
+        userId: '',
+        reserveTime: '',
+        payTime: '',
+        payStatus: '',
+        payType: '',
+        payAmount: '',
+        remark: ''
+      },
       baseUrl: process.env.VUE_APP_BASE_API,
       roomId: 1, // 实际使用中通过路由或父组件传入
       roomInfo: {
@@ -62,15 +100,33 @@ export default {
         remark: ''
       },
       roomImages: [],
-      comments: [],
+      comments: []
     }
   },
 
   created() {
     const roomId = this.$route.params && this.$route.params.roomId
+    this.form.roomId = roomId
     this.getRoomInfo(roomId)
   },
   methods: {
+    //预定房间
+    handleReserve() {
+      this.title = '预定房间--' + this.roomInfo.roomName
+      this.openReserve = true
+    },
+    //提交预定房间
+    submitReserveForm() {
+      addReserveRoomHistoryInfo(this.form).then(res => {
+        this.$modal.msgSuccess('预定成功,请在十五分钟内立即支付')
+        this.openReserve = false
+        this.getRoomInfo(this.form.roomId)
+      })
+    },
+    // 取消按钮
+    cancel() {
+      this.openReserve = false
+    },
     getRoomInfo(id) {
       getRoomInfo(id).then(response => {
         this.roomInfo = response.data
