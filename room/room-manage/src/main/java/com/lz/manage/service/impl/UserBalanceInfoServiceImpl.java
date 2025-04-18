@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lz.common.annotation.DataScope;
 import com.lz.common.core.domain.entity.SysUser;
 import com.lz.common.utils.StringUtils;
 
@@ -62,6 +63,7 @@ public class UserBalanceInfoServiceImpl extends ServiceImpl<UserBalanceInfoMappe
      * @return 用户余额
      */
     @Override
+    @DataScope(deptAlias = "tb_user_balance_info", userAlias = "tb_user_balance_info")
     public List<UserBalanceInfo> selectUserBalanceInfoList(UserBalanceInfo userBalanceInfo) {
         List<UserBalanceInfo> infos = userBalanceInfoMapper.selectUserBalanceInfoList(userBalanceInfo);
         for (UserBalanceInfo info : infos) {

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+import com.lz.common.annotation.DataScope;
 import com.lz.common.core.domain.entity.SysUser;
 import com.lz.common.exception.ServiceException;
 import com.lz.common.utils.SecurityUtils;
@@ -69,6 +70,7 @@ public class RechargeHistoryInfoServiceImpl extends ServiceImpl<RechargeHistoryI
      * @return 充值记录
      */
     @Override
+    @DataScope(deptAlias = "tb_recharge_history_info", userAlias = "tb_recharge_history_info")
     public List<RechargeHistoryInfo> selectRechargeHistoryInfoList(RechargeHistoryInfo rechargeHistoryInfo) {
         List<RechargeHistoryInfo> infos = rechargeHistoryInfoMapper.selectRechargeHistoryInfoList(rechargeHistoryInfo);
         for (RechargeHistoryInfo info : infos) {

@@ -17,13 +17,24 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="评论用户" prop="userId">
-        <el-input
+      <el-form-item label="评论用户" prop="userId" v-if="isQueryUser">
+        <el-select
           v-model="queryParams.userId"
-          placeholder="请输入评论用户"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入用户账号"
+          :remote-method="selectUserList"
+          :loading="userServiceLoading"
+        >
+          <el-option
+            v-for="item in userServiceList"
+            :key="item.userId"
+            :label="item.userName"
+            :value="item.userId"
+          >
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="评分" prop="score">
         <el-input
@@ -174,12 +185,12 @@
     <!-- 添加或修改房间评价对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="房间" prop="roomId">
-          <el-input v-model="form.roomId" placeholder="请输入房间"/>
-        </el-form-item>
-        <el-form-item label="评论用户" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入评论用户"/>
-        </el-form-item>
+<!--        <el-form-item label="房间" prop="roomId">-->
+<!--          <el-input v-model="form.roomId" placeholder="请输入房间"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="评论用户" prop="userId">-->
+<!--          <el-input v-model="form.userId" placeholder="请输入评论用户"/>-->
+<!--        </el-form-item>-->
         <el-form-item label="评分" prop="score">
           <el-input v-model="form.score" placeholder="请输入评分"/>
         </el-form-item>
@@ -207,11 +218,21 @@ import {
   updateRoomCommentInfo
 } from '@/api/manage/roomCommentInfo'
 import { checkPermi } from '@/utils/permission'
+import { listUser } from '@/api/system/user'
 
 export default {
   name: 'RoomCommentInfo',
   data() {
     return {
+      isQueryUser: false,
+      //用户信息
+      userServiceList: [],
+      userServiceLoading: false,
+      userServiceQueryParams: {
+        userName: '',
+        pageNum: 1,
+        pageSize: 10
+      },
       //表格展示列
       columns: [
         { key: 0, label: '评论ID', visible: false },
@@ -284,9 +305,47 @@ export default {
     }
   },
   created() {
+    if (checkPermi(['manage:roomCommentInfo:all'])) {
+      this.isQueryUser = true
+      this.getUserList()
+    }
     this.getList()
   },
   methods: {
+    checkPermi,
+    /**
+     * 获取用户列表推荐
+     * @param query
+     */
+    selectUserList(query) {
+      if (query !== '') {
+        this.userServiceLoading = true
+        this.userServiceQueryParams.userName = query
+        setTimeout(() => {
+          this.getUserList()
+        }, 200)
+      } else {
+        this.userServiceList = []
+      }
+    },
+    /**
+     * 获取用户信息列表
+     */
+    getUserList() {
+      //添加查询参数
+      if (this.form.userId != null) {
+        this.userServiceQueryParams.userId = this.form.userId
+      } else {
+        this.userServiceQueryParams.userId = null
+      }
+      if (this.userServiceQueryParams.userName != null) {
+        this.userServiceQueryParams.userId = null
+      }
+      listUser(this.userServiceQueryParams).then(res => {
+        this.userServiceList = res.rows
+        this.userServiceLoading = false
+      })
+    },
     /** 查询房间评价列表 */
     getList() {
       this.loading = true
@@ -300,7 +359,8 @@ export default {
         this.queryParams.params['endUpdateTime'] = this.daterangeUpdateTime[1]
       }
       if (!checkPermi(['manage:roomCommentInfo:all'])) {
-        this.queryParams.userId = this.$store.state.user.userId
+        console.log('非管理员查询')
+        this.queryParams.userId = this.$store.state.user.id;
       }
       listRoomCommentInfo(this.queryParams).then(response => {
         this.roomCommentInfoList = response.rows

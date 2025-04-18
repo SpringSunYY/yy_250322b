@@ -25,13 +25,24 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="用户" prop="userId">
-        <el-input
+      <el-form-item label="用户" prop="userId" v-if="isQueryUser">>
+        <el-select
           v-model="queryParams.userId"
-          placeholder="请输入用户"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+          filterable
+          remote
+          reserve-keyword
+          placeholder="请输入用户账号"
+          :remote-method="selectUserList"
+          :loading="userServiceLoading"
+        >
+          <el-option
+            v-for="item in userServiceList"
+            :key="item.userId"
+            :label="item.userName"
+            :value="item.userId"
+          >
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
@@ -226,12 +237,22 @@ import {
   updatePayHistoryInfo
 } from '@/api/manage/payHistoryInfo'
 import { checkPermi } from '@/utils/permission'
+import { listUser } from '@/api/system/user'
 
 export default {
   name: 'PayHistoryInfo',
   dicts: ['r_pay_status'],
   data() {
     return {
+      isQueryUser: false,
+      //用户信息
+      userServiceList: [],
+      userServiceLoading: false,
+      userServiceQueryParams: {
+        userName: '',
+        pageNum: 1,
+        pageSize: 10
+      },
       //表格展示列
       columns: [
         { key: 0, label: '支付记录编号', visible: false },
@@ -308,10 +329,47 @@ export default {
     }
   },
   created() {
+    if (checkPermi(['manage:payhistory:audit'])) {
+      this.isQueryUser = true
+      this.getUserList()
+    }
     this.getList()
   },
   methods: {
     checkPermi,
+    /**
+     * 获取用户列表推荐
+     * @param query
+     */
+    selectUserList(query) {
+      if (query !== '') {
+        this.userServiceLoading = true
+        this.userServiceQueryParams.userName = query
+        setTimeout(() => {
+          this.getUserList()
+        }, 200)
+      } else {
+        this.userServiceList = []
+      }
+    },
+    /**
+     * 获取用户信息列表
+     */
+    getUserList() {
+      //添加查询参数
+      if (this.form.userId != null) {
+        this.userServiceQueryParams.userId = this.form.userId
+      } else {
+        this.userServiceQueryParams.userId = null
+      }
+      if (this.userServiceQueryParams.userName != null) {
+        this.userServiceQueryParams.userId = null
+      }
+      listUser(this.userServiceQueryParams).then(res => {
+        this.userServiceList = res.rows
+        this.userServiceLoading = false
+      })
+    },
     /** 查询支付记录列表 */
     getList() {
       this.loading = true

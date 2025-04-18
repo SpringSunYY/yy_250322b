@@ -225,7 +225,7 @@
         <el-form-item label="充值凭证" prop="rechargeVoucher">
           <image-upload v-model="form.rechargeVoucher"/>
         </el-form-item>
-        <el-form-item label="审核状态" prop="auditStatus">
+        <el-form-item label="审核状态" prop="auditStatus" v-if="checkPermi(['manage:rechargeHistoryInfo:audit'])">
           <el-radio-group v-model="form.auditStatus">
             <el-radio
               v-for="dict in dict.type.r_pay_status"

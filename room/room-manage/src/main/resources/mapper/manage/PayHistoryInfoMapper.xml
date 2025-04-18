@@ -41,7 +41,10 @@
             <if test="params.beginUpdateTime != null and params.beginUpdateTime != '' and params.endUpdateTime != null and params.endUpdateTime != ''">
                 and update_time between #{params.beginUpdateTime} and #{params.endUpdateTime}
             </if>
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
         </where>
+        order by create_time desc
     </select>
 
     <select id="selectPayHistoryInfoByHistoryId" parameterType="Long" resultMap="PayHistoryInfoResult">

@@ -19,7 +19,7 @@
       </el-form-item>
       <el-form-item label="用户" prop="userId" v-if="isQueryUser">
         <el-select
-          v-model="form.userId"
+          v-model="queryParams.userId"
           filterable
           remote
           reserve-keyword
