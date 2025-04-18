@@ -126,9 +126,11 @@
       <el-table-column label="评论内容" :show-overflow-tooltip="true" align="center" v-if="columns[4].visible"
                        prop="content"
       />
-      <el-table-column label="评论图片" :show-overflow-tooltip="true" align="center" v-if="columns[5].visible"
-                       prop="imageUrls"
-      />
+      <el-table-column label="评论图片" align="center" v-if="columns[5].visible" prop="imageUrls" width="100">
+        <template slot-scope="scope">
+          <image-preview :src="scope.row.imageUrls" :width="50" :height="50"/>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" v-if="columns[6].visible" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
@@ -204,6 +206,7 @@ import {
   addRoomCommentInfo,
   updateRoomCommentInfo
 } from '@/api/manage/roomCommentInfo'
+import { checkPermi } from '@/utils/permission'
 
 export default {
   name: 'RoomCommentInfo',
@@ -295,6 +298,9 @@ export default {
       if (null != this.daterangeUpdateTime && '' != this.daterangeUpdateTime) {
         this.queryParams.params['beginUpdateTime'] = this.daterangeUpdateTime[0]
         this.queryParams.params['endUpdateTime'] = this.daterangeUpdateTime[1]
+      }
+      if (!checkPermi(['manage:roomCommentInfo:all'])) {
+        this.queryParams.userId = this.$store.state.user.userId
       }
       listRoomCommentInfo(this.queryParams).then(response => {
         this.roomCommentInfoList = response.rows

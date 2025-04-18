@@ -48,16 +48,15 @@
       <el-empty description="暂无评论" v-if="comments.length === 0"/>
       <el-card class="comment-card" v-for="comment in comments" :key="comment.id" shadow="never">
         <div class="comment-header">
-          <el-rate :value="comment.score" disabled/>
+          <el-rate :value="Number(comment.score)" disabled/>
           <span class="comment-time">{{ comment.createTime }}</span>
         </div>
         <div class="comment-content">{{ comment.content }}</div>
         <div class="comment-images" v-if="comment.imageUrls">
           <el-image
-            v-for="(img, index) in comment.imageUrls.split(';')"
+            v-for="(img, index) in comment.imageUrls.split(',')"
             :key="index"
-            :src="img"
-            :preview-src-list="comment.imageUrls.split(';')"
+            :src="baseUrl+img"
             :initial-index="index"
             fit="cover"
             style="width: 100px; height: 100px; margin-right: 10px"
@@ -69,7 +68,7 @@
 </template>
 
 <script>
-import { getRoomCommentInfo } from '@/api/manage/roomCommentInfo'
+import { listRoomCommentInfo } from '@/api/manage/roomCommentInfo'
 import { getRoomInfo } from '@/api/manage/roomInfo'
 import { addReserveRoomHistoryInfo } from '@/api/manage/reserveRoomHistoryInfo'
 
@@ -77,6 +76,7 @@ export default {
   name: 'RoomDetail',
   data() {
     return {
+      title: '预定房间',
       openReserve: false,
       form: {
         roomId: '',
@@ -100,7 +100,20 @@ export default {
         remark: ''
       },
       roomImages: [],
-      comments: []
+      comments: [],
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        id: null,
+        roomId: null,
+        userId: null,
+        score: null,
+        content: null,
+        imageUrls: null,
+        createTime: null,
+        updateTime: null
+      },
     }
   },
 
@@ -108,9 +121,27 @@ export default {
     const roomId = this.$route.params && this.$route.params.roomId
     this.form.roomId = roomId
     this.getRoomInfo(roomId)
-    this.fetchRoomComments()
+    this.getList()
   },
   methods: {
+    /** 查询房间评价列表 */
+    getList() {
+      this.loading = true
+      this.queryParams.params = {}
+      if (null != this.daterangeCreateTime && '' != this.daterangeCreateTime) {
+        this.queryParams.params['beginCreateTime'] = this.daterangeCreateTime[0]
+        this.queryParams.params['endCreateTime'] = this.daterangeCreateTime[1]
+      }
+      if (null != this.daterangeUpdateTime && '' != this.daterangeUpdateTime) {
+        this.queryParams.params['beginUpdateTime'] = this.daterangeUpdateTime[0]
+        this.queryParams.params['endUpdateTime'] = this.daterangeUpdateTime[1]
+      }
+      listRoomCommentInfo(this.queryParams).then(response => {
+        this.comments = response.rows
+        this.total = response.total
+        this.loading = false
+      })
+    },
     //预定房间
     handleReserve() {
       this.title = '预定房间--' + this.roomInfo.roomName
