@@ -4,6 +4,41 @@
 
       <h1 style="font-size: 36px;text-align: center">酒店管理系统</h1>
       <el-row :gutter="20">
+        <el-col :xs="24" :sm="8" :lg="8">
+          <el-card class="box-card" shadow="hover">
+            <p
+              style="height: 200px;align-items: center;  display: flex; justify-content: center; font-weight: bold;font-size: 36px"
+            >
+              <router-link to="/roomManage/roomInfo">
+                预定房间
+              </router-link>
+            </p>
+          </el-card>
+        </el-col>
+        <el-col :xs="24" :sm="8" :lg="8">
+          <el-card class="box-card" shadow="hover">
+            <p
+              style="height: 200px;align-items: center;  display: flex; justify-content: center; font-weight: bold;font-size: 36px"
+            >
+              <router-link to="/roomManage/reserveRoomHistoryInfo">
+                支付订单
+              </router-link>
+            </p>
+          </el-card>
+        </el-col>
+        <el-col :xs="24" :sm="8" :lg="8">
+          <el-card class="box-card" shadow="hover">
+            <p
+              style="height: 200px;align-items: center;  display: flex; justify-content: center; font-weight: bold;font-size: 36px"
+            >
+              <router-link to="/roomManage/roomCommentInfo">
+                充值余额
+              </router-link>
+            </p>
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" style="margin-top: 20px">
         <el-col :xs="24" :sm="4" :lg="4" v-for="(item,index) in roomInfoList" :key="index">
           <el-card class="box-card" shadow="hover">
             <image-preview :src="item.roomImage" :width="200" :height="200"/>
@@ -71,7 +106,7 @@ export default {
       })
     },
     toRoomDetail(row) {
-      this.$router.push({ path: '/manage/roomDetail/index/'+row.roomId })
+      this.$router.push({ path: '/manage/roomDetail/index/' + row.roomId })
     }
   }
 }

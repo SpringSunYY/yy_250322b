@@ -290,9 +290,9 @@
         <!--        <el-form-item label="支付金额" prop="payPrice">-->
         <!--          <el-input-number :min="0" :precision="2" v-model="form.payPrice" placeholder="请输入实际支付金额"/>-->
         <!--        </el-form-item>-->
-        <!--        <el-form-item label="支付凭证" prop="payVoucher">-->
-        <!--          <image-upload :file-size="10" :limit="5" v-model="form.payVoucher"/>-->
-        <!--        </el-form-item>-->
+        <el-form-item label="余额" prop="balance">
+          <el-input readonly  v-model="form.balance" placeholder="请输入余额"/>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
         </el-form-item>
@@ -306,12 +306,12 @@
     <!-- 添加或修改房间评价对话框 -->
     <el-dialog :title="title" :visible.sync="openComment" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-<!--        <el-form-item label="房间" prop="roomId">-->
-<!--          <el-input v-model="form.roomId" placeholder="请输入房间"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="评论用户" prop="userId">-->
-<!--          <el-input v-model="form.userId" placeholder="请输入评论用户"/>-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="房间" prop="roomId">-->
+        <!--          <el-input v-model="form.roomId" placeholder="请输入房间"/>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="评论用户" prop="userId">-->
+        <!--          <el-input v-model="form.userId" placeholder="请输入评论用户"/>-->
+        <!--        </el-form-item>-->
         <el-form-item label="评分" prop="score">
           <el-input-number :min="0" :man="5" v-model="form.score" placeholder="请输入评分"/>
         </el-form-item>
@@ -508,7 +508,7 @@ export default {
       this.form.reserveId = row.historyId
       this.form.roomId = row.roomId
     },
-    submitComment(){
+    submitComment() {
       addRoomCommentInfo(this.form).then(res => {
         this.$modal.msgSuccess('评论成功')
         this.openComment = false
@@ -517,10 +517,13 @@ export default {
     },
     handlePay(row) {
       this.reset()
-      this.title = '支付订单--' + row.roomName
-      this.payOpen = true
-      this.form.userId = row.userId
-      this.form.reserveId = row.historyId
+      getReserveRoomHistoryInfo(row.historyId).then(res => {
+        this.title = '支付订单--' + row.roomName
+        this.payOpen = true
+        this.form.userId = row.userId
+        this.form.reserveId = row.historyId
+        this.form.balance = res.data.balance
+      })
     },
     submitPayForm() {
       addPayHistoryInfo(this.form).then(res => {

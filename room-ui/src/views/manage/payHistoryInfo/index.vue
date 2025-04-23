@@ -25,7 +25,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="用户" prop="userId" v-if="isQueryUser">>
+      <el-form-item label="用户" prop="userId" v-if="isQueryUser">
         <el-select
           v-model="queryParams.userId"
           filterable

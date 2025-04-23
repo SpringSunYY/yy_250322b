@@ -54,6 +54,13 @@ public class ReserveRoomHistoryInfoVo implements Serializable {
     @Excel(name = "订单总价")
     private BigDecimal totalPrice;
 
+
+    /**
+     * 当前余额
+     */
+    @Excel(name = "当前余额")
+    private BigDecimal balance;
+
     /**
      * 状态（0待支付 1入住中 2已退房 3已结束）
      */

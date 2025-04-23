@@ -3,6 +3,9 @@ package com.lz.manage.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.lz.manage.model.domain.UserBalanceInfo;
+import com.lz.manage.service.IUserBalanceInfoService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import javax.annotation.Resource;
 
@@ -40,6 +43,9 @@ public class ReserveRoomHistoryInfoController extends BaseController
 {
     @Resource
     private IReserveRoomHistoryInfoService reserveRoomHistoryInfoService;
+
+    @Resource
+    private IUserBalanceInfoService userBalanceInfoService;
 
     /**
      * 查询订房记录列表
@@ -79,7 +85,10 @@ public class ReserveRoomHistoryInfoController extends BaseController
     public AjaxResult getInfo(@PathVariable("historyId") Long historyId)
     {
         ReserveRoomHistoryInfo reserveRoomHistoryInfo = reserveRoomHistoryInfoService.selectReserveRoomHistoryInfoByHistoryId(historyId);
-        return success(ReserveRoomHistoryInfoVo.objToVo(reserveRoomHistoryInfo));
+        ReserveRoomHistoryInfoVo roomHistoryInfoVo = ReserveRoomHistoryInfoVo.objToVo(reserveRoomHistoryInfo);
+        UserBalanceInfo userBalanceInfo = userBalanceInfoService.selectUserBalanceInfoByUserId(reserveRoomHistoryInfo.getUserId());
+        roomHistoryInfoVo.setBalance(userBalanceInfo.getBalance());
+        return success(roomHistoryInfoVo);
     }
 
     /**
